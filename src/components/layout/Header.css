@@ -86,6 +86,10 @@
   gap: 8px;
   padding: 0 14px;
   color: #aaa;
+  width:150px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   font-size: 0.73rem;
 }
 .site-header__search:hover,
