@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useLanguage } from '../context/LanguageContext';
 import './AuthPages.css';
 
@@ -33,6 +34,10 @@ export function Login() {
   return (
     <div className="auth-page">
       <div className="auth-page__card">
+      <Link to="/" className="back-link">
+        <ArrowLeft weight="bold" />
+        <span>Back</span>
+      </Link>
         <h1>{t('auth.login')}</h1>
 
         {error && <p className="auth-page__error" role="alert">{error}</p>}

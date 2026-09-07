@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/ui/Button';
 import { useLanguage } from '../context/LanguageContext';
+import { ArrowLeft } from '@phosphor-icons/react';
 import './AuthPages.css';
 
 export function Register() {
@@ -40,6 +41,10 @@ export function Register() {
   return (
     <div className="auth-page">
       <div className="auth-page__card">
+        <Link to="/login" className="back-link">
+          <ArrowLeft weight="bold" />
+          <span>Back</span>
+        </Link>
         <h1>{t('auth.register')}</h1>
 
         {error && <p className="auth-page__error" role="alert">{error}</p>}

@@ -92,7 +92,7 @@
 }
 @media (max-width: 768px) {
   .game-hero {
-    min-height: 78svh;
+    min-height: 85svh;
   }
   .game-hero__scrim {
     background: linear-gradient(

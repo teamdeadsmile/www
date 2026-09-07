@@ -174,7 +174,6 @@
 }
 @media (max-width: 900px) {
   .site-header__nav,
-  .site-header__search,
   .site-header__signin,
   .site-header__account-pill,
   .site-header .language-switcher {
