@@ -5,14 +5,6 @@ import './GameHero.css';
 export function GameHero({ game, isDetail = false, carouselIndex = 0, carouselCount = 0, onNext, onPrev }) {
   return (
     <section className={`game-hero ${isDetail ? 'game-hero--detail' : ''}`}>
-      {/* =====================================================
-          DEADSMILE GAME HERO IMAGE
-
-          SUBSTITUIR ESTE PLACEHOLDER PELA IMAGEM REAL.
-
-          Local:
-          /public/assets/games/[slug]/hero.jpg
-      ===================================================== */}
       <div className="game-hero__media">
         <img src={game.heroImage || '/assets/placeholders/game-hero.svg'} alt="" className="game-hero__image" />
         <div className="game-hero__scrim" />

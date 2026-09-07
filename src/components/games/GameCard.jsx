@@ -5,9 +5,6 @@ export function GameCard({ game }) {
   return (
     <Link to={`/games/${game.slug}`} className="game-card">
       <div className="game-card__image-wrap">
-        {/* IMAGE SLOT:
-            substituir por arte oficial do jogo
-            local: frontend/public/assets/games/[slug]/cover.jpg */}
         <img
           src={game.coverImage || '/assets/placeholders/game-cover.svg'}
           alt=""

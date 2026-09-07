@@ -5,7 +5,7 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [status, setStatus] = useState('loading'); // loading | authenticated | guest
+  const [status, setStatus] = useState('loading');
 
   const refresh = useCallback(async () => {
     try {
@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
     try {
       await api.post('/auth/logout');
     } finally {
-      // A stale/expired server session must never leave the UI in an authenticated state.
       setUser(null);
       setStatus('guest');
     }

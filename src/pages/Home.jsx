@@ -11,53 +11,25 @@ import './Home.css';
 
 export function Home() {
   const { t } = useLanguage();
-
-  // =========================
-  // GAMES — PostgreSQL → API
-  // =========================
   const catalog = useGames({ limit: 8 });
   const games = catalog.games || [];
-
-  // =========================
-  // NEWS — PostgreSQL → API
-  // =========================
   const [news, setNews] = useState([]);
   const [newsStatus, setNewsStatus] = useState('loading');
   const [newsError, setNewsError] = useState('');
-
-  // =========================
-  // VIDEOS — PostgreSQL → API
-  // =========================
   const [videos, setVideos] = useState([]);
   const [videosStatus, setVideosStatus] = useState('loading');
   const [videosError, setVideosError] = useState('');
-
-  // =========================
-  // UI STATE
-  // =========================
   const [slide, setSlide] = useState(0);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
-
-  // =========================
-  // FEATURED GAMES
-  // =========================
   const featured = useMemo(
     () => games.filter((game) => game.featured).slice(0, 3),
     [games]
   );
-
-  // Fallback:
-  // caso não existam jogos featured,
-  // utiliza os primeiros jogos do banco.
   const heroGames =
     featured.length > 0
       ? featured
       : games.slice(0, 3);
-
-  // =========================
-  // LOAD NEWS
-  // =========================
   useEffect(() => {
     let cancelled = false;
 
@@ -69,16 +41,6 @@ export function Home() {
         const response = await api.get('/news');
 
         if (cancelled) return;
-
-        /*
-         * Suporta diferentes formatos de resposta da API:
-         *
-         * []
-         * { items: [] }
-         * { data: [] }
-         * { data: { items: [] } }
-         * { news: [] }
-         */
         let data = [];
 
         if (Array.isArray(response)) {
@@ -114,10 +76,6 @@ export function Home() {
       cancelled = true;
     };
   }, []);
-
-  // =========================
-  // LOAD VIDEOS
-  // =========================
   useEffect(() => {
     let cancelled = false;
 
@@ -129,16 +87,6 @@ export function Home() {
         const response = await api.get('/videos');
 
         if (cancelled) return;
-
-        /*
-         * Suporta diferentes formatos de resposta da API:
-         *
-         * []
-         * { items: [] }
-         * { data: [] }
-         * { data: { items: [] } }
-         * { videos: [] }
-         */
         let data = [];
 
         if (Array.isArray(response)) {
@@ -174,17 +122,11 @@ export function Home() {
       cancelled = true;
     };
   }, []);
-
-  // =========================
-  // HERO CAROUSEL
-  // =========================
   useEffect(() => {
     if (heroGames.length < 2) {
       setSlide(0);
       return;
     }
-
-    // Mantém o índice sempre válido.
     setSlide(
       (current) => current % heroGames.length
     );
@@ -198,10 +140,6 @@ export function Home() {
 
     return () => clearInterval(id);
   }, [heroGames.length]);
-
-  // =========================
-  // NEWSLETTER
-  // =========================
   async function subscribe(e) {
     e.preventDefault();
     setMessage('');
@@ -224,10 +162,6 @@ export function Home() {
 
   return (
     <div className="home">
-
-      {/* =========================
-          HERO / FEATURED GAME
-      ========================== */}
       {active && (
         <GameHero
           game={active}
@@ -264,10 +198,6 @@ export function Home() {
             </p>
           </section>
         )}
-
-      {/* =========================
-          NEWSWIRE
-      ========================== */}
       <section className="home__news container">
         <Reveal>
           <div className="home__section-head">
@@ -288,21 +218,18 @@ export function Home() {
           </div>
         </Reveal>
 
-        {/* Loading */}
         {newsStatus === 'loading' && (
           <div className="home__loading">
             Loading news…
           </div>
         )}
 
-        {/* Error */}
         {newsStatus === 'error' && (
           <div className="home__loading">
             {newsError}
           </div>
         )}
 
-        {/* Empty */}
         {newsStatus === 'success' &&
           news.length === 0 && (
             <div className="home__empty">
@@ -312,7 +239,6 @@ export function Home() {
             </div>
           )}
 
-        {/* News */}
         {newsStatus === 'success' &&
           news.length > 0 && (
             <div className="home__news-grid">
@@ -334,7 +260,6 @@ export function Home() {
                       }`}
                     >
 
-                      {/* NEWS IMAGE */}
                       <div className="news-card__visual">
 
                         {item.image ? (
@@ -363,7 +288,6 @@ export function Home() {
                         </span>
                       </div>
 
-                      {/* NEWS CONTENT */}
                       <div className="news-card__meta">
 
                         <small>
@@ -409,10 +333,6 @@ export function Home() {
           )}
 
       </section>
-
-      {/* =========================
-          GAMES
-      ========================== */}
       <section className="home__games container">
 
         <Reveal>
@@ -433,22 +353,16 @@ export function Home() {
             </Link>
           </div>
         </Reveal>
-
-        {/* Loading */}
         {catalog.status === 'loading' && (
           <div className="home__loading">
             Loading games…
           </div>
         )}
-
-        {/* Error */}
         {catalog.status === 'error' && (
           <div className="home__loading">
             {catalog.error}
           </div>
         )}
-
-        {/* Empty */}
         {catalog.status === 'success' &&
           games.length === 0 && (
             <div className="home__empty">
@@ -457,8 +371,6 @@ export function Home() {
               </p>
             </div>
           )}
-
-        {/* Games */}
         {catalog.status === 'success' &&
           games.length > 0 && (
             <Reveal delay={80}>
@@ -467,10 +379,6 @@ export function Home() {
           )}
 
       </section>
-
-      {/* =========================
-          STUDIO
-      ========================== */}
       <section className="home__feature">
 
         <div className="container home__feature-inner">
@@ -511,10 +419,6 @@ export function Home() {
         </div>
 
       </section>
-
-      {/* =========================
-          VIDEOS
-      ========================== */}
       <section className="home__media container">
 
         <Reveal>
@@ -538,21 +442,16 @@ export function Home() {
           </div>
         </Reveal>
 
-        {/* Loading */}
         {videosStatus === 'loading' && (
           <div className="home__loading">
             Loading videos…
           </div>
         )}
-
-        {/* Error */}
         {videosStatus === 'error' && (
           <div className="home__loading">
             {videosError}
           </div>
         )}
-
-        {/* Empty */}
         {videosStatus === 'success' &&
           videos.length === 0 && (
             <div className="home__empty">
@@ -561,8 +460,6 @@ export function Home() {
               </p>
             </div>
           )}
-
-        {/* Videos */}
         {videosStatus === 'success' &&
           videos.length > 0 && (
             <div className="home__video-grid">
@@ -580,8 +477,6 @@ export function Home() {
                       video.title
                     }
                   >
-
-                    {/* VIDEO THUMBNAIL */}
                     <div className="video-card__visual">
 
                       {video.thumbnail ? (
@@ -605,8 +500,6 @@ export function Home() {
                       </div>
 
                     </div>
-
-                    {/* VIDEO INFO */}
                     <div>
 
                       <small>
@@ -629,10 +522,6 @@ export function Home() {
           )}
 
       </section>
-
-      {/* =========================
-          NEWSLETTER
-      ========================== */}
       <section className="home__newsletter">
 
         <div className="container home__newsletter-inner">

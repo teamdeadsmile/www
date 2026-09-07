@@ -8,7 +8,6 @@ export function GameGallery({ images = [] }) {
       <h2 className="game-gallery__title">Gallery</h2>
       <div className="game-gallery__scroller">
         {images.map((src, i) => (
-          // IMAGE SLOT: substituir por screenshot oficial do jogo
           <img key={i} src={src} alt={`Screenshot ${i + 1}`} loading="lazy" />
         ))}
       </div>

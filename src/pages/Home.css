@@ -4,10 +4,6 @@
   overflow: hidden;
 }
 
-/* =========================
-   SECTION HEAD
-========================= */
-
 .home__section-head {
   display: flex;
   align-items: flex-end;
@@ -23,10 +19,6 @@
   line-height: 0.82;
   letter-spacing: -0.065em;
 }
-
-/* =========================
-   NEWS
-========================= */
 
 .home__news {
   padding: clamp(100px, 12vw, 180px) 0;
@@ -53,10 +45,6 @@
   border-color: #444;
 }
 
-/* =========================
-   NEWS IMAGE
-========================= */
-
 .news-card__visual {
   position: relative;
   height: 270px;
@@ -68,7 +56,6 @@
   height: 330px;
 }
 
-/* Imagem da notícia */
 
 .news-card__visual img {
   display: block;
@@ -81,13 +68,10 @@
     filter 0.4s ease;
 }
 
-/* Zoom suave */
 
 .news-card:hover .news-card__visual img {
   transform: scale(1.045);
 }
-
-/* Overlay cinematográfico */
 
 .news-card__visual::before {
   content: "";
@@ -103,8 +87,6 @@
     );
 }
 
-/* Elemento decorativo */
-
 .news-card__visual::after {
   content: "";
   position: absolute;
@@ -117,10 +99,6 @@
   z-index: 2;
   pointer-events: none;
 }
-
-/* =========================
-   NEWS FALLBACK
-========================= */
 
 .news-card__visual-placeholder {
   width: 100%;
@@ -144,7 +122,6 @@
   color: #2e2e2e;
 }
 
-/* Número */
 
 .news-card__number {
   position: absolute;
@@ -159,10 +136,6 @@
 
   pointer-events: none;
 }
-
-/* =========================
-   NEWS META
-========================= */
 
 .news-card__meta {
   padding: 22px;
@@ -202,10 +175,6 @@
   color: #fff;
 }
 
-/* =========================
-   CIRCLE LINK
-========================= */
-
 .circle-link {
   width: 50px;
   height: 50px;
@@ -231,17 +200,10 @@
   transform: translateY(-2px);
 }
 
-/* =========================
-   GAMES
-========================= */
-
 .home__games {
   padding-bottom: clamp(120px, 14vw, 200px);
 }
 
-/* =========================
-   LOADING
-========================= */
 
 .home__loading {
   min-height: 180px;
@@ -253,10 +215,6 @@
 
   border: 1px solid #202020;
 }
-
-/* =========================
-   STUDIO
-========================= */
 
 .home__feature {
   background: #151515;
@@ -287,10 +245,6 @@
   margin: 34px 0;
 }
 
-/* =========================
-   VIDEOS
-========================= */
-
 .home__media {
   padding: clamp(110px, 13vw, 180px) 0;
 }
@@ -305,9 +259,6 @@
   display: block;
 }
 
-/* =========================
-   VIDEO THUMBNAIL
-========================= */
 
 .video-card__visual {
   position: relative;
@@ -323,9 +274,6 @@
     transform 0.4s var(--ease-standard),
     border-color 0.3s ease;
 }
-
-/* Thumbnail */
-
 .video-card__visual img {
   display: block;
 
@@ -339,8 +287,6 @@
     transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1),
     filter 0.4s ease;
 }
-
-/* Overlay escuro */
 
 .video-card__visual::after {
   content: "";
@@ -360,8 +306,6 @@
     );
 }
 
-/* Hover */
-
 .video-card:hover .video-card__visual {
   transform: translateY(-4px);
   border-color: #444;
@@ -370,10 +314,6 @@
 .video-card:hover .video-card__visual img {
   transform: scale(1.045);
 }
-
-/* =========================
-   VIDEO FALLBACK
-========================= */
 
 .video-card__visual-placeholder {
   width: 100%;
@@ -386,10 +326,6 @@
       #0d0d0d 100%
     );
 }
-
-/* =========================
-   VIDEO OVERLAY
-========================= */
 
 .video-card__overlay {
   position: absolute;
@@ -425,10 +361,6 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* =========================
-   VIDEO INFO
-========================= */
-
 .video-card > div:last-child {
   padding: 16px 2px;
 }
@@ -440,10 +372,6 @@
   letter-spacing: -0.02em;
   margin-top: 8px;
 }
-
-/* =========================
-   NEWSLETTER
-========================= */
 
 .home__newsletter {
   border-top: 1px solid #242424;
@@ -468,10 +396,6 @@
   max-width: 500px;
   margin-top: 26px;
 }
-
-/* =========================
-   NEWSLETTER FORM
-========================= */
 
 .newsletter-form label {
   display: block;
@@ -533,10 +457,6 @@
 
   margin-top: 12px;
 }
-
-/* =========================
-   RESPONSIVE
-========================= */
 
 @media (max-width: 850px) {
 

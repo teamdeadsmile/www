@@ -231,11 +231,6 @@ export function AdminComposer() {
     setError('');
 
     try {
-      /*
-       * A API aceita no máximo 50 itens por requisição.
-       * Usar 100 fazia o endpoint falhar e o painel
-       * acabava mostrando tudo como 0.
-       */
       const [
         newsResponse,
         videosResponse,
@@ -322,10 +317,6 @@ export function AdminComposer() {
 
   return (
     <>
-      {/* =========================================
-          FLOATING ADMIN COMPOSER
-          ========================================= */}
-
       <div
         className={`admin-composer ${
           menuOpen ? 'is-open' : ''
@@ -406,10 +397,6 @@ export function AdminComposer() {
         </button>
       </div>
 
-      {/* =========================================
-          PUBLISH MODAL
-          ========================================= */}
-
       <Modal
         open={!!type}
         onClose={closeComposer}
@@ -436,7 +423,6 @@ export function AdminComposer() {
           </header>
 
           <form onSubmit={submit}>
-            {/* NEWSLETTER */}
 
             {type === 'newsletter' && (
               <>
@@ -467,8 +453,6 @@ export function AdminComposer() {
                 />
               </>
             )}
-
-            {/* VIDEO */}
 
             {type === 'video' && (
               <>
@@ -509,8 +493,6 @@ export function AdminComposer() {
                 />
               </>
             )}
-
-            {/* GAME */}
 
             {type === 'game' && (
               <>
@@ -653,10 +635,6 @@ export function AdminComposer() {
           </form>
         </div>
       </Modal>
-
-      {/* =========================================
-          CONTENT MANAGER
-          ========================================= */}
 
       <Modal
         open={manage}

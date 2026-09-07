@@ -4,6 +4,7 @@
   overflow: hidden;
   background: #111;
   border-bottom: 1px solid #222;
+  border-radius: 0px 0px 50px 50px;
 }
 .game-hero__media {
   position: absolute;

@@ -57,8 +57,6 @@ export function Support() {
       </Reveal>
 
       <section className="support-page__grid">
-
-        {/* FAQ */}
         <Reveal>
           <div className="support-card">
             <span>01</span>
