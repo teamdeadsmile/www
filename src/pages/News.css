@@ -32,6 +32,7 @@
   grid-template-columns: 145px minmax(0, 1fr) 42px;
   gap: 40px;
   align-items: start;
+  margin-top: 20px;
   padding: 40px 60px;
   border: 1px solid #252525;
   border-radius: 32px;
