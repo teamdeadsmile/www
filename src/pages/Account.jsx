@@ -230,7 +230,6 @@ export function Account() {
                             className="account-panel account-panel--danger"
                         >
                             <div className="account-panel__head">
-                                <span>03</span>
                                 <h2>Delete account</h2>
                             </div>
                             <p>

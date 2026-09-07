@@ -22,14 +22,12 @@ export function Studio() {
             <section className="container studio-page__grid">
                 <Reveal>
                     <article>
-                        <span>01</span>
                         <h2>{t("studio.vision")}</h2>
                         <p>{t("studio.visionCopy")}</p>
                     </article>
                 </Reveal>
                 <Reveal delay={100}>
                     <article>
-                        <span>02</span>
                         <h2>{t("studio.craft")}</h2>
                         <p>{t("studio.craftCopy")}</p>
                     </article>
