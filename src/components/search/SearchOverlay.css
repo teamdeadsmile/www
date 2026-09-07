@@ -36,6 +36,9 @@
   font-weight: 500;
   letter-spacing: -0.05em;
 }
+.search-overlay__input:focus {
+  border: 0;
+}
 .search-overlay__input::placeholder {
   color: #444;
 }
