@@ -118,7 +118,6 @@ export function Account() {
                     <Reveal>
                         <section id="profile" className="account-panel">
                             <div className="account-panel__head">
-                                <span>01</span>
                                 <h2>Public profile</h2>
                             </div>
                             <form
@@ -190,7 +189,6 @@ export function Account() {
                     <Reveal delay={80}>
                         <section id="settings" className="account-panel">
                             <div className="account-panel__head">
-                                <span>02</span>
                                 <h2>Settings</h2>
                             </div>
                             <form
@@ -230,7 +228,6 @@ export function Account() {
                             className="account-panel account-panel--danger"
                         >
                             <div className="account-panel__head">
-                                <span>03</span>
                                 <h2>Delete account</h2>
                             </div>
                             <p>
