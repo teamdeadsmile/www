@@ -36,9 +36,6 @@
   font-weight: 500;
   letter-spacing: -0.05em;
 }
-.search-overlay__input:focus {
-  border: 0;
-}
 .search-overlay__input::placeholder {
   color: #444;
 }
@@ -54,6 +51,11 @@
   color: #090909;
   font-size: 1rem;
   transition: transform 0.3s ease;
+}
+.search-overlay__bar:focus,
+.search-overlay__input:focus,
+.search-overlay__close:focus {
+  outline: none;
 }
 .search-overlay__close:hover {
   transform: rotate(90deg);
