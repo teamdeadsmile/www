@@ -2,20 +2,20 @@
   min-height: 100svh;
   display: grid;
   place-items: center;
-  padding: 24px 16px; /* reduzi um pouco para não roubar espaço em telas pequenas */
+  padding: 24px 16px;
   background-image: url('/assets/branding/backgroundLogin.png');
   background-position: center;
   background-size: cover;
-  background-attachment: fixed; /* cuidado: em mobile pode causar lag, mas mantive */
+  background-attachment: fixed;
 }
 
 .auth-page__card {
   width: 100%;
-  max-width: 480px; /* limite máximo para desktop */
-  padding: 40px 32px; /* padding interno mais confortável */
+  max-width: 480px;
+  padding: 40px 32px;
   border-radius: 28px;
   background: #111;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.7); /* dá profundidade */
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   transition: padding 0.2s;
 }
 
@@ -35,7 +35,7 @@
 
 .auth-page__card h1 {
   font-family: var(--font-display);
-  font-size: clamp(2.8rem, 10vw, 4.8rem); /* mais suave em mobile */
+  font-size: clamp(2.8rem, 10vw, 4.8rem);
   line-height: 1.05;
   text-transform: none;
   margin-bottom: 32px;
@@ -44,21 +44,21 @@
 }
 
 .auth-page__field {
-  margin-bottom: 20px; /* um pouco mais de espaço */
+  margin-bottom: 20px;
 }
 .auth-page__field label {
   display: block;
   margin-bottom: 6px;
-  color: #aaa; /* mais legível que #777 */
+  color: #aaa;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.3px;
 }
 .auth-page__field input {
   width: 100%;
-  height: 52px; /* um pouco menor fica mais elegante */
+  height: 52px;
   padding: 0 18px;
-  background: #1a1a1a; /* levemente mais claro que o fundo do card */
+  background: #1a1a1a;
   border: 1px solid rgba(255,255,255,0.10);
   border-radius: 100px;
   outline: none;
@@ -121,15 +121,13 @@
 .auth-page__footer a:hover {
   border-color: #fff;
 }
-
-/* ---- RESPONSIVIDADE FINA ---- */
 @media (max-width: 600px) {
   .auth-page {
-    padding: 16px 12px; /* menos padding nas bordas */
-    background-attachment: scroll; /* evita lag em mobile */
+    padding: 16px 12px;
+    background-attachment: scroll;
   }
   .auth-page__card {
-    padding: 28px 20px; /* mais interno para caber melhor */
+    padding: 28px 20px;
     border-radius: 20px;
     max-width: 100%;
   }
@@ -157,8 +155,6 @@
     font-size: 0.78rem;
   }
 }
-
-/* telas muito pequenas (ex: 320px) */
 @media (max-width: 380px) {
   .auth-page__card {
     padding: 20px 14px;
