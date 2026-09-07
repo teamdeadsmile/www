@@ -23,6 +23,7 @@
 }
 .account-page__avatar {
   width: 94px;
+  display: none;
   height: 94px;
   border-radius: 50%;
   display: grid;
