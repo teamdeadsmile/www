@@ -8,6 +8,7 @@ import { Search } from './pages/Search';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Account } from './pages/Account';
+import { Privacy } from './pages/Privacy';
 import { Studio } from './pages/Studio';
 import { News } from './pages/News';
 import { Videos } from './pages/Videos';
@@ -20,6 +21,7 @@ import { PublicProfile } from './pages/PublicProfile';
 export default function App() {
   return <Routes><Route element={<AppLayout />}>
     <Route path="/" element={<Home />} />
+    <Route path="/privacy" element={<Privacy />} />
     <Route path="/games" element={<Games />} />
     <Route path="/games/:slug" element={<GameDetails />} />
     <Route path="/news" element={<News />} />

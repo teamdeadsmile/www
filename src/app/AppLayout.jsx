@@ -4,6 +4,7 @@ import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
 import { SearchOverlay } from '../components/search/SearchOverlay';
 import './AppLayout.css';
+import { CookieConsent } from '../components/ui/CookieConsent';
 import { AdminComposer } from '../components/admin/AdminComposer';
 
 export function AppLayout() {
@@ -20,5 +21,6 @@ export function AppLayout() {
     {!isAuthPage && <Footer />}
     <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     {!isAuthPage && <AdminComposer />}
+    {!isAuthPage && <CookieConsent />}
   </>;
 }
