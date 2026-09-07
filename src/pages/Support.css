@@ -1,0 +1,422 @@
+.support-page {
+  padding-top: calc(var(--header-height) + 110px);
+  padding-bottom: 140px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.support-page h1 {
+  max-width: 900px;
+  margin: 0;
+
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 9vw, 9rem);
+  font-weight: 500;
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+  text-transform: none;
+}
+
+.support-page__intro {
+  max-width: 600px;
+  margin: 32px 0 90px;
+
+  color: #858581;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+/* =========================
+   MAIN GRID
+========================= */
+
+.support-page__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.65fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.support-card {
+  position: relative;
+
+  min-width: 0;
+  padding: 32px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 24px;
+
+  background: #101010;
+
+  transition:
+    border-color 0.35s ease,
+    transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.support-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.support-card > span {
+  display: block;
+
+  color: #5f5f5c;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+/* =========================
+   CARD TITLES
+========================= */
+
+.support-card h2 {
+  margin: 75px 0 34px;
+
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  font-weight: 500;
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-transform: none;
+}
+
+.support-card p {
+  color: #858581;
+  line-height: 1.7;
+}
+
+/* =========================
+   FAQ
+========================= */
+
+.support-faq {
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.support-faq-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.support-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  width: 100%;
+  min-height: 68px;
+  padding: 17px 0;
+
+  border: 0;
+  background: transparent;
+
+  color: #dededb;
+  text-align: left;
+
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition: color 0.25s ease;
+}
+
+.support-faq-question:hover {
+  color: #fff;
+}
+
+.support-faq-question svg {
+  flex: 0 0 auto;
+  color: #777;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.support-faq-question:hover svg {
+  color: #fff;
+}
+
+.support-faq-answer {
+  max-width: 620px;
+
+  margin: -2px 0 0;
+  padding: 0 40px 22px 0 !important;
+
+  color: #777 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.7 !important;
+}
+
+/* =========================
+   CONTACT CARD
+========================= */
+
+.support-card--accent {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100%;
+
+  border-color: transparent;
+  background: #f0f0eb;
+  color: #0b0b0b;
+}
+
+.support-card--accent:hover {
+  border-color: transparent;
+}
+
+.support-card--accent > span {
+  color: #777;
+}
+
+.support-card--accent h2 {
+  color: #0b0b0b;
+}
+
+.support-card--accent p {
+  color: #656560;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.support-form {
+  display: grid;
+  gap: 0;
+
+  margin-top: auto;
+  padding-top: 55px;
+}
+
+.support-form input,
+.support-form select,
+.support-form textarea {
+  width: 100%;
+
+  padding: 17px 0;
+
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+  outline: none;
+
+  background: transparent;
+  color: #0b0b0b;
+
+  font: inherit;
+  font-size: 0.82rem;
+
+  transition: border-color 0.25s ease;
+}
+
+.support-form input:focus,
+.support-form select:focus,
+.support-form textarea:focus {
+  border-bottom-color: #0b0b0b;
+}
+
+.support-form input::placeholder,
+.support-form textarea::placeholder {
+  color: #777;
+}
+
+.support-form select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.support-form textarea {
+  min-height: 115px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+.support-form .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  width: 100%;
+  min-height: 54px;
+  margin-top: 22px;
+  padding: 0 20px;
+
+  border: 1px solid #0b0b0b;
+  border-radius: 999px;
+
+  background: #0b0b0b;
+  color: #f0f0eb;
+
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.support-form .btn:hover {
+  background: transparent;
+  color: #0b0b0b;
+  transform: translateY(-2px);
+}
+
+.support-form .btn svg {
+  transition: transform 0.25s ease;
+}
+
+.support-form .btn:hover svg {
+  transform: translate(2px, -2px);
+}
+
+/* =========================
+   FORM MESSAGE
+========================= */
+
+.support-form small {
+  display: block;
+
+  margin-top: 14px;
+
+  color: #555;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+/* =========================
+   BACK LINK
+========================= */
+
+.support-page .back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 55px;
+
+  color: #777;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: none;
+
+  transition: color 0.25s ease;
+}
+
+.support-page .back-link:hover {
+  color: #fff;
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 950px) {
+  .support-page {
+    padding-top: calc(var(--header-height) + 90px);
+    padding-bottom: 100px;
+  }
+
+  .support-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .support-card {
+    min-height: auto;
+  }
+
+  .support-card--accent {
+    min-height: 560px;
+  }
+
+  .support-form {
+    margin-top: 30px;
+    padding-top: 20px;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .support-page {
+    padding-top: calc(var(--header-height-mobile) + 65px);
+    padding-bottom: 80px;
+  }
+
+  .support-page .back-link {
+    margin-bottom: 40px;
+  }
+
+  .support-page h1 {
+    font-size: clamp(3.6rem, 17vw, 6rem);
+    line-height: 0.84;
+  }
+
+  .support-page__intro {
+    margin: 25px 0 55px;
+
+    font-size: 0.9rem;
+    line-height: 1.65;
+  }
+
+  .support-page__grid {
+    gap: 12px;
+  }
+
+  .support-card {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .support-card h2 {
+    margin: 60px 0 28px;
+    font-size: clamp(2.4rem, 12vw, 4rem);
+  }
+
+  .support-faq-question {
+    min-height: 64px;
+    font-size: 0.8rem;
+  }
+
+  .support-faq-answer {
+    padding-right: 20px !important;
+  }
+
+  .support-card--accent {
+    min-height: auto;
+  }
+
+  .support-form {
+    margin-top: 20px;
+    padding-top: 15px;
+  }
+
+  .support-form input,
+  .support-form select,
+  .support-form textarea {
+    font-size: 0.8rem;
+  }
+}
