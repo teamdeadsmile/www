@@ -5,6 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { api } from '../services/api';
 import { Reveal } from '../components/ui/Reveal';
 import './Support.css';
+import { ArrowLeft } from "@phosphor-icons/react";
 
 const faqs = [
   'How do I update a game?',
@@ -45,7 +46,8 @@ export function Support() {
   return (
     <div className="support-page container">
       <Link to="/" className="back-link">
-        {t('common.back')}
+        <ArrowLeft weight="bold" />
+        <span>Back</span>
       </Link>
 
       <Reveal>

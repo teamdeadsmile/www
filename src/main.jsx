@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { ArrowLeft } from "@phosphor-icons/react";
 import { LanguageProvider } from './context/LanguageContext';
 import './styles/global.css';
 

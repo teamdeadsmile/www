@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
 import { Button } from "../components/ui/Button";
 import { Reveal } from "../components/ui/Reveal";
+import { ArrowLeft } from "@phosphor-icons/react";
 import "./Account.css";
 export function Account() {
     const { user, logout, refresh } = useAuth();
@@ -87,7 +88,8 @@ export function Account() {
     return (
         <div className="account-page container">
             <Link to="/" className="back-link">
-                Back
+              <ArrowLeft weight="bold" />
+               <span>Back</span>
             </Link>
             <Reveal>
                 <div className="account-page__hero">
@@ -228,6 +230,7 @@ export function Account() {
                             className="account-panel account-panel--danger"
                         >
                             <div className="account-panel__head">
+                                <span>03</span>
                                 <h2>Delete account</h2>
                             </div>
                             <p>
