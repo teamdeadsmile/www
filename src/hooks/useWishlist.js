@@ -1,13 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { api } from '../services/api';
 
 export function useWishlist(gameId) {
   const [inWishlist, setInWishlist] = useState(false);
   const [loading, setLoading] = useState(true);
-  const numericGameId = typeof gameId === 'number' ? gameId : Number(gameId);
+  const numericGameId = useMemo(() => {
+    if (typeof gameId === 'number') return gameId;
+    if (typeof gameId === 'string') {
+      const num = Number(gameId);
+      return isNaN(num) ? null : num;
+    }
+    return null;
+  }, [gameId]);
 
   const check = useCallback(async () => {
-    if (!numericGameId || isNaN(numericGameId) || !Number.isInteger(numericGameId)) {
+    if (!numericGameId || !Number.isInteger(numericGameId)) {
       setLoading(false);
       return;
     }
@@ -22,7 +29,7 @@ export function useWishlist(gameId) {
   }, [numericGameId]);
 
   const toggle = useCallback(async () => {
-    if (!numericGameId || isNaN(numericGameId) || !Number.isInteger(numericGameId)) {
+    if (!numericGameId || !Number.isInteger(numericGameId)) {
       console.warn('Invalid gameId for wishlist toggle:', gameId);
       return false;
     }

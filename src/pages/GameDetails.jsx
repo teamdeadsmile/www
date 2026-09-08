@@ -26,7 +26,9 @@ export function GameDetails() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const game = state.game;
-  const { inWishlist, loading: wishlistLoading, toggle } = useWishlist(game?.id);
+  const numericGameId = game?.id ? Number(game.id) : null;
+  const isValidGameId = numericGameId && !isNaN(numericGameId) && Number.isInteger(numericGameId);
+  const { inWishlist, loading: wishlistLoading, toggle } = useWishlist(isValidGameId ? numericGameId : null);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,7 +129,7 @@ export function GameDetails() {
               </a>
             )}
 
-            {game && authStatus === 'authenticated' && (
+            {authStatus === 'authenticated' && isValidGameId && (
               <button
                 className={`btn game-details__btn ${inWishlist ? 'btn--primary' : 'btn--secondary'}`}
                 onClick={toggle}
