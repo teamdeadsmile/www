@@ -40,18 +40,50 @@ export function Account() {
     async function avatar(e) {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (
-            !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
-            file.size > 1_500_000
-        ) {
-            setError("Use PNG, JPG or WEBP up to 1.5 MB.");
+        if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5_000_000) {
+            setError('Use PNG, JPG or WEBP up to 5 MB.');
             return;
         }
-        const reader = new FileReader();
-        reader.onload = () =>
-            setForm((f) => ({ ...f, avatarUrl: reader.result }));
-        reader.readAsDataURL(file);
-    }
+
+        try {
+            const dataUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => resolve(ev.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+            });
+            const img = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.src = dataUrl;
+            });
+            const MAX_SIZE = 400;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_SIZE || height > MAX_SIZE) {
+            const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+            setForm((f) => ({ ...f, avatarUrl: compressedDataUrl }));
+            setError('');
+
+        } catch (err) {
+            setError('Failed to process image.');
+            console.error(err);
+        }
+        }
     async function save(e) {
         e.preventDefault();
         setSaving(true);
