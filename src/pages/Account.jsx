@@ -128,16 +128,6 @@ export function Account() {
                     <div>
                         <h1>ACCOUNT SETTINGS</h1>
                     </div>
-                    <Link
-                        to={`/profile/${encodeURIComponent(user.username)}`}
-                        className="account-page__avatar"
-                    >
-                        {user.avatarUrl ? (
-                            <img src={user.avatarUrl} alt="" />
-                        ) : (
-                            user.username.slice(0, 1).toUpperCase()
-                        )}
-                    </Link>
                 </div>
             </Reveal>
             <div className="account-page__layout">
