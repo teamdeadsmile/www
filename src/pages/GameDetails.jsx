@@ -49,7 +49,7 @@ export function GameDetails() {
     return () => { cancelled = true; };
   }, [slug, revision]);
 
-  const totalImages = 15;
+  const totalImages = 6;
   const screenshots = game
     ? Array.from({ length: totalImages }, (_, i) =>
         `/assets/games/screenshots/${game.slug}/${i + 1}.png`
