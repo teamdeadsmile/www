@@ -6,7 +6,8 @@ export function useWishlist(gameId) {
   const [loading, setLoading] = useState(true);
 
   const check = useCallback(async () => {
-    if (!gameId || typeof gameId !== 'number') {
+    // Se gameId for undefined/null/Nan, não faz a requisição
+    if (!gameId || typeof gameId !== 'number' || isNaN(gameId)) {
       setLoading(false);
       return;
     }
@@ -21,8 +22,8 @@ export function useWishlist(gameId) {
   }, [gameId]);
 
   const toggle = useCallback(async () => {
-    if (!gameId || typeof gameId !== 'number') {
-      console.warn('Invalid gameId for wishlist toggle');
+    if (!gameId || typeof gameId !== 'number' || isNaN(gameId)) {
+      console.warn('Invalid gameId for wishlist toggle:', gameId);
       return false;
     }
     setLoading(true);
