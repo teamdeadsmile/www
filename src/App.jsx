@@ -9,6 +9,7 @@ import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Account } from './pages/Account';
 import { Privacy } from './pages/Privacy';
+import { Terms } from './pages/Terms';
 import { Studio } from './pages/Studio';
 import { News } from './pages/News';
 import { Videos } from './pages/Videos';
@@ -22,6 +23,7 @@ export default function App() {
   return <Routes><Route element={<AppLayout />}>
     <Route path="/" element={<Home />} />
     <Route path="/privacy" element={<Privacy />} />
+    <Route path="/terms" element={<Terms />} />
     <Route path="/games" element={<Games />} />
     <Route path="/games/:slug" element={<GameDetails />} />
     <Route path="/news" element={<News />} />
