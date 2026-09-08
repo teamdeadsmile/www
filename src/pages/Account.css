@@ -23,7 +23,6 @@
 }
 .account-page__avatar {
   width: 94px;
-  display: none;
   height: 94px;
   border-radius: 50%;
   display: grid;
@@ -288,4 +287,17 @@
   .account-page__username .btn {
     width: 100%;
   }
+}
+
+.account-page__wishlist {
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 11px 14px;
+  border-radius: 999px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.account-page__wishlist:hover {
+  background: #151515;
+  color: #fff;
 }

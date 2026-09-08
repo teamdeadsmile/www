@@ -51,11 +51,13 @@ export function GameDetails() {
     return () => { cancelled = true; };
   }, [slug, revision]);
 
-  const totalImages = 6;
+  // Use screenshots from the backend if available; fall back to local asset paths
   const screenshots = game
-    ? Array.from({ length: totalImages }, (_, i) =>
-        `/assets/games/screenshots/${game.slug}/${i + 1}.png`
-      )
+    ? (game.screenshots && game.screenshots.length > 0
+        ? game.screenshots
+        : Array.from({ length: 6 }, (_, i) =>
+            `/assets/games/screenshots/${game.slug}/${i + 1}.png`
+          ))
     : [];
 
   const openLightbox = (index) => setSelectedImageIndex(index);
@@ -172,15 +174,16 @@ export function GameDetails() {
             )}
           </div>
 
-          <div className="game-details__screenshots">
-            <h3 className="game-details__screenshots-title">Screenshots</h3>
-            {screenshots.length > 0 ? (
+          {screenshots.length > 0 && (
+            <div className="game-details__screenshots">
+              <h3 className="game-details__screenshots-title">Screenshots</h3>
               <div className="game-details__screenshots-grid">
                 {screenshots.map((src, i) => (
                   <div
                     key={i}
                     className="game-details__screenshot-item"
                     onClick={() => openLightbox(i)}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && openLightbox(i)}
                     role="button"
                     tabIndex={0}
                     aria-label={`Open screenshot ${i + 1}`}
@@ -189,10 +192,8 @@ export function GameDetails() {
                   </div>
                 ))}
               </div>
-            ) : (
-              <p className="game-details__screenshots-empty">No screenshots available.</p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <aside className="game-details__aside">

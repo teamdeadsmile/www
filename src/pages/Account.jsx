@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Button";
 import { Reveal } from "../components/ui/Reveal";
 import { ArrowLeft } from "@phosphor-icons/react";
 import "./Account.css";
+
 export function Account() {
     const { user, logout, refresh } = useAuth();
     const navigate = useNavigate();
@@ -18,10 +19,14 @@ export function Account() {
         avatarUrl: user?.avatarUrl || null,
     });
     const [password, setPassword] = useState("");
-    const [status, setStatus] = useState("");
-    const [error, setError] = useState("");
+    const [profileStatus, setProfileStatus] = useState("");
+    const [profileError, setProfileError] = useState("");
+    const [settingsStatus, setSettingsStatus] = useState("");
+    const [settingsError, setSettingsError] = useState("");
+    const [deleteError, setDeleteError] = useState("");
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
+
     useEffect(
         () =>
             setForm((f) => ({
@@ -35,37 +40,40 @@ export function Account() {
             })),
         [user],
     );
+
     if (!user) return null;
+
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
     async function avatar(e) {
         const file = e.target.files?.[0];
         if (!file) return;
         if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5_000_000) {
-            setError('Use PNG, JPG or WEBP up to 5 MB.');
+            setProfileError('Use PNG, JPG or WEBP up to 5 MB.');
             return;
         }
 
         try {
             const dataUrl = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => resolve(ev.target.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
+                const reader = new FileReader();
+                reader.onload = (ev) => resolve(ev.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
             const img = await new Promise((resolve, reject) => {
-            const image = new Image();
-            image.onload = () => resolve(image);
-            image.onerror = reject;
-            image.src = dataUrl;
+                const image = new Image();
+                image.onload = () => resolve(image);
+                image.onerror = reject;
+                image.src = dataUrl;
             });
             const MAX_SIZE = 400;
             let width = img.width;
             let height = img.height;
 
             if (width > MAX_SIZE || height > MAX_SIZE) {
-            const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
-            width = Math.round(width * ratio);
-            height = Math.round(height * ratio);
+                const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
+                width = Math.round(width * ratio);
+                height = Math.round(height * ratio);
             }
             const canvas = document.createElement('canvas');
             canvas.width = width;
@@ -77,51 +85,84 @@ export function Account() {
 
             const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
             setForm((f) => ({ ...f, avatarUrl: compressedDataUrl }));
-            setError('');
-
+            setProfileError('');
         } catch (err) {
-            setError('Failed to process image.');
+            setProfileError('Failed to process image.');
             console.error(err);
         }
-        }
-    async function save(e) {
+    }
+
+    async function saveProfile(e) {
         e.preventDefault();
         setSaving(true);
-        setError("");
-        setStatus("");
+        setProfileError("");
+        setProfileStatus("");
         try {
-            await api.patch("/account", form);
+            await api.patch("/account", {
+                username: form.username,
+                bio: form.bio,
+                websiteUrl: form.websiteUrl,
+                location: form.location,
+                avatarUrl: form.avatarUrl,
+                email: form.email,
+            });
             await refresh();
-            setStatus("Changes saved.");
-        } catch (e) {
-            setError(e.message);
+            setProfileStatus("Profile saved.");
+        } catch (err) {
+            setProfileError(err.message);
         } finally {
             setSaving(false);
         }
     }
+
+    async function saveSettings(e) {
+        e.preventDefault();
+        setSaving(true);
+        setSettingsError("");
+        setSettingsStatus("");
+        try {
+            await api.patch("/account", {
+                username: form.username,
+                email: form.email,
+                bio: form.bio,
+                websiteUrl: form.websiteUrl,
+                location: form.location,
+                avatarUrl: form.avatarUrl,
+            });
+            await refresh();
+            setSettingsStatus("Settings saved.");
+        } catch (err) {
+            setSettingsError(err.message);
+        } finally {
+            setSaving(false);
+        }
+    }
+
     async function del(e) {
         e.preventDefault();
         setDeleting(true);
-        setError("");
+        setDeleteError("");
         try {
             await api.delete("/account", { password });
             await logout();
             navigate("/", { replace: true });
-        } catch (e) {
-            setError(e.message);
+        } catch (err) {
+            setDeleteError(err.message);
         } finally {
             setDeleting(false);
         }
     }
+
     async function signOut() {
         await logout();
         navigate("/", { replace: true });
     }
+
     return (
         <div className="account-page container">
             <Link to="/" className="back-link">
-              <ArrowLeft weight="bold" />
-               <span>Back</span>
+                <ArrowLeft weight="bold" />
+                <span>Back</span>
             </Link>
             <Reveal>
                 <div className="account-page__hero">
@@ -149,7 +190,7 @@ export function Account() {
                             </div>
                             <form
                                 className="account-profile-form"
-                                onSubmit={save}
+                                onSubmit={saveProfile}
                             >
                                 <div className="account-avatar-edit">
                                     <div className="account-page__avatar account-page__avatar--large">
@@ -203,6 +244,16 @@ export function Account() {
                                         onChange={set("location")}
                                     />
                                 </label>
+                                {profileError && (
+                                    <p className="account-page__error" role="alert" aria-live="polite">
+                                        {profileError}
+                                    </p>
+                                )}
+                                {profileStatus && (
+                                    <p className="account-page__success" aria-live="polite">
+                                        {profileStatus}
+                                    </p>
+                                )}
                                 <Button
                                     type="submit"
                                     variant="secondary"
@@ -220,7 +271,7 @@ export function Account() {
                             </div>
                             <form
                                 className="account-profile-form"
-                                onSubmit={save}
+                                onSubmit={saveSettings}
                             >
                                 <label>
                                     Email
@@ -230,6 +281,16 @@ export function Account() {
                                         onChange={set("email")}
                                     />
                                 </label>
+                                {settingsError && (
+                                    <p className="account-page__error" role="alert" aria-live="polite">
+                                        {settingsError}
+                                    </p>
+                                )}
+                                {settingsStatus && (
+                                    <p className="account-page__success" aria-live="polite">
+                                        {settingsStatus}
+                                    </p>
+                                )}
                                 <Button
                                     type="submit"
                                     variant="secondary"
@@ -273,6 +334,11 @@ export function Account() {
                                         }
                                     />
                                 </label>
+                                {deleteError && (
+                                    <p className="account-page__error" role="alert" aria-live="polite">
+                                        {deleteError}
+                                    </p>
+                                )}
                                 <Button
                                     type="submit"
                                     variant="danger"
@@ -283,17 +349,6 @@ export function Account() {
                             </form>
                         </section>
                     </Reveal>
-                    {(error || status) && (
-                        <p
-                            className={
-                                error
-                                    ? "account-page__error"
-                                    : "account-page__success"
-                            }
-                        >
-                            {error || status}
-                        </p>
-                    )}
                 </div>
             </div>
         </div>

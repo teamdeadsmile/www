@@ -42,8 +42,8 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
                 ref={panelRef}
             >
                 <div className="mobile-menu__top">
-                    <Link to="/" className="mobile-menu__brand" style={{ display: 'none' }} onClick={onClose}>
-                        <img src="/assets/branding/deadsmile-mark.svg" alt="" />
+                    <Link to="/" className="mobile-menu__brand" onClick={onClose}>
+                        <img src="/assets/branding/deadsmile-mark.svg" alt="Deadsmile Games" style={{ height: 28 }} />
                     </Link>
                     <button
                         type="button"
@@ -81,7 +81,6 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
                         <MagnifyingGlass weight="bold" className="mobile-menu__arrow" />
                     </button>
 
-                    {/* Links extras */}
                     <Link to="/presskit" onClick={onClose} className="mobile-menu__link" style={{ '--menu-delay': '200ms' }}>
                         <span>Press Kit</span>
                         <File weight="bold" className="mobile-menu__arrow" />
