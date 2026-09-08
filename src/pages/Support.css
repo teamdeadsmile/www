@@ -440,3 +440,31 @@
     height: 48px;
   }
 }
+/* ========== STATUS SYNC ========== */
+.support-extra__item .status-icon-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.support-extra__item .status-icon.up {
+  color: #4caf50;
+}
+
+.support-extra__item .status-icon.down {
+  color: #ef5350;
+}
+
+.support-extra__item .status-spinner {
+  color: #888;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.support-extra__item .status-timestamp {
+  color: #666;
+  font-size: 0.8rem;
+}
