@@ -16,7 +16,7 @@ export function PressKit() {
     setLoading(true);
     setError('');
 
-    api.get('/games', { limit: 50 })
+    api.get('/games', { limit: 48 })
       .then((data) => {
         if (!cancelled) {
           const items = Array.isArray(data) ? data : data.items || [];
