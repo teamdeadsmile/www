@@ -115,6 +115,9 @@ export function Account() {
                     </a>
                     <a href="#settings">Settings</a>
                     <a href="#danger">Security</a>
+                    <Link to="/wishlist" className="account-page__wishlist">
+                        Wishlist
+                    </Link>
                 </aside>
                 <div className="account-page__content">
                     <Reveal>
