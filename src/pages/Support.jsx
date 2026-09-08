@@ -1,12 +1,63 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { ArrowUpRight, Plus, Minus, Envelope, Chat, Question } from '@phosphor-icons/react';
+import { useState, useEffect } from 'react';
+import { ArrowUpRight, Plus, Minus, Envelope, Chat, Question, CheckCircle, XCircle } from '@phosphor-icons/react';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../services/api';
 import { Reveal } from '../components/ui/Reveal';
 import './Support.css';
 import { ArrowLeft } from "@phosphor-icons/react";
 
+// ============================================================
+//   STATUS MONITOR (mesmo usado na página /status)
+// ============================================================
+const API_BASE = import.meta.env.VITE_API_URL || 'https://apideadsmile.vercel.app/api';
+
+const CORE_ENDPOINTS = [
+  { name: 'API Gateway', endpoint: '/health' },
+  { name: 'CSRF Token', endpoint: '/csrf' },
+];
+
+const REQUEST_TIMEOUT = 5000;
+
+async function checkEndpoint(endpoint) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+  try {
+    const url = `${API_BASE}${endpoint}`;
+    const res = await fetch(url, {
+      signal: controller.signal,
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+    });
+    clearTimeout(timeout);
+    return res.status < 500;
+  } catch {
+    clearTimeout(timeout);
+    return false;
+  }
+}
+
+function useApiStatus() {
+  const [status, setStatus] = useState({ allUp: true, lastChecked: null, loading: true });
+
+  const check = async () => {
+    const results = await Promise.all(CORE_ENDPOINTS.map((ep) => checkEndpoint(ep.endpoint)));
+    const allUp = results.every((v) => v === true);
+    setStatus({ allUp, lastChecked: new Date(), loading: false });
+  };
+
+  useEffect(() => {
+    check();
+    const interval = setInterval(check, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return status;
+}
+
+// ============================================================
+//   FAQ
+// ============================================================
 const faqs = [
   {
     question: 'How do I update my game?',
@@ -30,8 +81,12 @@ const faqs = [
   },
 ];
 
+// ============================================================
+//   COMPONENTE PRINCIPAL
+// ============================================================
 export function Support() {
   const { t } = useLanguage();
+  const { allUp, lastChecked, loading } = useApiStatus();
 
   const [openIndex, setOpenIndex] = useState(null);
   const [form, setForm] = useState({
@@ -76,7 +131,7 @@ export function Support() {
         <div className="support-page__header">
           <h1>{t('support.title') || 'Support'}</h1>
           <p className="support-page__intro">
-            {t('support.intro') || 'Need help? Find answers to common questions or reach out to our team. We\'re here to help with game issues, account problems, and more.'}
+            {t('support.intro') || "Need help? Find answers to common questions or reach out to our team. We're here to help with game issues, account problems, and more."}
           </p>
         </div>
       </Reveal>
@@ -94,7 +149,6 @@ export function Support() {
             <div className="support-faq">
               {faqs.map((faq, index) => {
                 const isOpen = openIndex === index;
-
                 return (
                   <div className="support-faq-item" key={index}>
                     <button
@@ -110,7 +164,6 @@ export function Support() {
                         <Plus size={20} weight="bold" aria-hidden="true" />
                       )}
                     </button>
-
                     {isOpen && (
                       <div className="support-faq-answer">
                         <p>{faq.answer}</p>
@@ -195,16 +248,40 @@ export function Support() {
         </Reveal>
       </section>
 
+      {/* ============================================================
+          SEÇÃO DE STATUS DINÂMICO (sync com a API)
+          ============================================================ */}
       <section className="support-page__extra">
         <Reveal>
           <div className="support-extra">
             <div className="support-extra__item">
-              <Chat weight="bold" size={24} />
+              <div className="status-icon-wrapper">
+                {loading ? (
+                  <span className="status-spinner">…</span>
+                ) : allUp ? (
+                  <CheckCircle weight="fill" size={24} className="status-icon up" />
+                ) : (
+                  <XCircle weight="fill" size={24} className="status-icon down" />
+                )}
+              </div>
               <div>
                 <h3>Live Status</h3>
-                <p>All systems operational. Games and services are running smoothly.</p>
+                <p>
+                  {loading
+                    ? 'Checking services…'
+                    : allUp
+                    ? 'All systems operational.'
+                    : 'Some services are experiencing issues.'}
+                  {lastChecked && (
+                    <span className="status-timestamp">
+                      {' '}
+                      · Updated {lastChecked.toLocaleTimeString()}
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
+
             <div className="support-extra__item">
               <Envelope weight="bold" size={24} />
               <div>
