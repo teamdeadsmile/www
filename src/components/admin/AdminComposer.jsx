@@ -241,16 +241,16 @@ export function AdminComposer() {
         gamesResponse,
       ] = await Promise.all([
         api.get('/news', {
-          limit: 50,
+          limit: 48,
         }),
 
         api.get('/videos', {
-          limit: 50,
+          limit: 48,
         }),
 
         api.get('/games', {
           page: 1,
-          limit: 50,
+          limit: 48,
         }),
       ]);
 
