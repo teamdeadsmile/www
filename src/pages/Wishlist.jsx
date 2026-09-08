@@ -5,7 +5,6 @@ import { api } from '../services/api';
 import { GameCard } from '../components/games/GameCard';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ArrowLeft, HeartStraight } from '@phosphor-icons/react';
-import { resolveAssetUrl } from '../utils/resolveAsset';
 import './Wishlist.css';
 
 export function Wishlist() {
@@ -22,7 +21,12 @@ export function Wishlist() {
     api.get('/wishlist')
       .then((data) => {
         if (!cancelled) {
-          setGames(Array.isArray(data) ? data : []);
+          // Mapeia cover_image para coverImage
+          const mapped = (Array.isArray(data) ? data : []).map(game => ({
+            ...game,
+            coverImage: game.cover_image || game.coverImage || game.heroImage,
+          }));
+          setGames(mapped);
           setLoading(false);
         }
       })
@@ -91,13 +95,7 @@ export function Wishlist() {
       ) : (
         <div className="wishlist-page__grid">
           {games.map((game) => (
-            <GameCard
-              key={game.id}
-              game={{
-                ...game,
-                coverImage: resolveAssetUrl(game.cover_image || game.coverImage || game.heroImage),
-              }}
-            />
+            <GameCard key={game.id} game={game} />
           ))}
         </div>
       )}
