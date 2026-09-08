@@ -267,7 +267,7 @@ export function AdminComposer() {
 
       setItems({
         news: [],
-        videos: [],
+        video: [],
         games: [],
       });
     } finally {
@@ -315,7 +315,7 @@ export function AdminComposer() {
 
   const sections = [
     ['news', 'Newswire', Newspaper],
-    ['videos', 'Video', FilmStrip],
+    ['videos', 'Videos', FilmStrip],
     ['games', 'Games', GameController],
   ];
 
