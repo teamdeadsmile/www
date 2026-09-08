@@ -80,7 +80,7 @@ export function Terms() {
           <h2>8. Contact</h2>
           <p>
             If you have any questions about these Terms, please contact us at{' '}
-            <a href="mailto:legal@deadsmilegames.com">legal@deadsmilegames.com</a>.
+            <a href="mailto:deadsmilegames@gmail.com">deadsmilegames@gmail.com</a>.
           </p>
         </div>
 

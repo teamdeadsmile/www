@@ -50,7 +50,7 @@ export function Privacy() {
         <div className="privacy-block">
           <h2>5. Your rights</h2>
           <p>
-            You may access, update, or delete your account information at any time through your account settings. For any questions, contact us at <a href="mailto:privacy@deadsmilegames.com">privacy@deadsmilegames.com</a>.
+            You may access, update, or delete your account information at any time through your account settings. For any questions, contact us at <a href="mailto:deadsmilegames@gmail.com">deadsmilegames@gmail.com</a>.
           </p>
         </div>
 
