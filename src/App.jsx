@@ -16,6 +16,7 @@ import { Videos } from './pages/Videos';
 import { Downloads } from './pages/Downloads';
 import { Store } from './pages/Store';
 import { Support } from './pages/Support';
+import { PressKit } from './pages/PressKit';
 import { NotFound } from './pages/NotFound';
 import { PublicProfile } from './pages/PublicProfile';
 
@@ -24,6 +25,7 @@ export default function App() {
     <Route path="/" element={<Home />} />
     <Route path="/privacy" element={<Privacy />} />
     <Route path="/terms" element={<Terms />} />
+    <Route path="/presskit" element={<PressKit />} />
     <Route path="/games" element={<Games />} />
     <Route path="/games/:slug" element={<GameDetails />} />
     <Route path="/news" element={<News />} />
