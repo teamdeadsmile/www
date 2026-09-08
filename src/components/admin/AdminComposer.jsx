@@ -267,7 +267,7 @@ export function AdminComposer() {
 
       setItems({
         news: [],
-        video: [],
+        videos: [],
         games: [],
       });
     } finally {
