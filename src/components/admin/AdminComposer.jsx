@@ -41,13 +41,34 @@ const initial = {
 };
 
 function normalizeList(response) {
-  if (Array.isArray(response)) return response;
-  if (Array.isArray(response?.items)) return response.items;
-  if (Array.isArray(response?.data)) return response.data;
-  if (Array.isArray(response?.data?.items)) return response.data.items;
-  if (Array.isArray(response?.games)) return response.games;
-  if (Array.isArray(response?.news)) return response.news;
-  if (Array.isArray(response?.videos)) return response.videos;
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  if (Array.isArray(response?.items)) {
+    return response.items;
+  }
+
+  if (Array.isArray(response?.data)) {
+    return response.data;
+  }
+
+  if (Array.isArray(response?.data?.items)) {
+    return response.data.items;
+  }
+
+  if (Array.isArray(response?.games)) {
+    return response.games;
+  }
+
+  if (Array.isArray(response?.news)) {
+    return response.news;
+  }
+
+  if (Array.isArray(response?.videos)) {
+    return response.videos;
+  }
+
   return [];
 }
 
@@ -56,26 +77,37 @@ export function AdminComposer() {
 
   const [type, setType] = useState(null);
   const [form, setForm] = useState({ ...initial });
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+
   const [manage, setManage] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
   const [items, setItems] = useState({
     news: [],
     videos: [],
     games: [],
   });
+
   const [loadingItems, setLoadingItems] = useState(false);
   const [deleting, setDeleting] = useState(null);
 
-  if (user?.role !== 'admin') return null;
+  if (user?.role !== 'admin') {
+    return null;
+  }
 
   const set = (key) => (event) => {
-    const value = event.target.type === 'checkbox'
-      ? event.target.checked
-      : event.target.value;
-    setForm((current) => ({ ...current, [key]: value }));
+    const value =
+      event.target.type === 'checkbox'
+        ? event.target.checked
+        : event.target.value;
+
+    setForm((current) => ({
+      ...current,
+      [key]: value,
+    }));
   };
 
   function open(typeName) {
@@ -87,7 +119,10 @@ export function AdminComposer() {
   }
 
   function closeComposer() {
-    if (saving) return;
+    if (saving) {
+      return;
+    }
+
     setType(null);
     setError('');
     setSaved(false);
@@ -97,25 +132,32 @@ export function AdminComposer() {
     try {
       return await fn();
     } catch (err) {
-      if (err?.status === 401 || err?.code === 'UNAUTHENTICATED') {
+      if (
+        err?.status === 401 ||
+        err?.code === 'UNAUTHENTICATED'
+      ) {
         await refresh();
         return fn();
       }
+
       throw err;
     }
   }
 
   async function submit(event) {
     event.preventDefault();
+
     setSaving(true);
     setError('');
     setSaved(false);
 
     try {
-      let path, payload;
+      let path;
+      let payload;
 
       if (type === 'newsletter') {
         path = '/admin/newsletter';
+
         payload = {
           title: form.title,
           excerpt: form.excerpt,
@@ -126,17 +168,21 @@ export function AdminComposer() {
 
       if (type === 'video') {
         path = '/admin/video';
+
         payload = {
           title: form.title,
           category: form.category,
           thumbnail: form.thumbnail,
           videoUrl: form.videoUrl || null,
-          durationSeconds: form.durationSeconds ? Number(form.durationSeconds) : null,
+          durationSeconds: form.durationSeconds
+            ? Number(form.durationSeconds)
+            : null,
         };
       }
 
       if (type === 'game') {
         path = '/admin/game';
+
         payload = {
           title: form.title,
           slug: form.slug,
@@ -150,19 +196,33 @@ export function AdminComposer() {
           featured: form.featured,
           purchaseUrl: form.purchaseUrl || null,
           downloadUrl: form.downloadUrl || null,
-          genres: form.genres.split(',').map((v) => v.trim()).filter(Boolean),
-          platforms: form.platforms.split(',').map((v) => v.trim()).filter(Boolean),
+
+          genres: form.genres
+            .split(',')
+            .map((value) => value.trim())
+            .filter(Boolean),
+
+          platforms: form.platforms
+            .split(',')
+            .map((value) => value.trim())
+            .filter(Boolean),
         };
       }
 
-      await authedRequest(() => api.post(path, payload));
+      await authedRequest(() =>
+        api.post(path, payload)
+      );
+
       setSaved(true);
-      setTimeout(() => {
+
+      window.setTimeout(() => {
         setType(null);
         window.location.reload();
       }, 500);
     } catch (err) {
-      setError(err?.message || 'Unable to publish.');
+      setError(
+        err?.message || 'Unable to publish.'
+      );
     } finally {
       setSaving(false);
     }
@@ -175,10 +235,23 @@ export function AdminComposer() {
     setError('');
 
     try {
-      const [newsResponse, videosResponse, gamesResponse] = await Promise.all([
-        api.get('/news', { limit: 48 }),
-        api.get('/videos', { limit: 48 }),
-        api.get('/games', { page: 1, limit: 48 }),
+      const [
+        newsResponse,
+        videosResponse,
+        gamesResponse,
+      ] = await Promise.all([
+        api.get('/news', {
+          limit: 48,
+        }),
+
+        api.get('/videos', {
+          limit: 48,
+        }),
+
+        api.get('/games', {
+          page: 1,
+          limit: 48,
+        }),
       ]);
 
       setItems({
@@ -187,68 +260,114 @@ export function AdminComposer() {
         games: normalizeList(gamesResponse),
       });
     } catch (err) {
-      setError(err?.message || 'Unable to load content.');
-      setItems({ news: [], videos: [], games: [] });
+      setError(
+        err?.message ||
+          'Unable to load content.'
+      );
+
+      setItems({
+        news: [],
+        videos: [],
+        games: [],
+      });
     } finally {
       setLoadingItems(false);
     }
   }
 
-  const deleteEndpointMap = {
-    news: 'newsletter',
-    videos: 'video',
-    games: 'game',
-  };
-
   async function remove(kind, id) {
     const confirmed = window.confirm(
       'Delete this item permanently? This action cannot be undone.'
     );
-    if (!confirmed) return;
+
+    if (!confirmed) {
+      return;
+    }
 
     const deleteKey = `${kind}:${id}`;
+
     setDeleting(deleteKey);
     setError('');
 
     try {
-      const endpoint = deleteEndpointMap[kind];
-      await authedRequest(() => api.delete(`/admin/${endpoint}/${id}`));
+      await authedRequest(() =>
+        api.delete(
+          `/admin/${kind}/${id}`
+        )
+      );
 
       setItems((current) => ({
         ...current,
-        [kind]: current[kind].filter((item) => item.id !== id),
+
+        [kind]: current[kind].filter(
+          (item) => item.id !== id
+        ),
       }));
     } catch (err) {
-      setError(err?.message || 'Unable to delete item.');
+      setError(
+        err?.message ||
+          'Unable to delete item.'
+      );
     } finally {
       setDeleting(null);
     }
   }
 
   const sections = [
-    { key: 'news', label: 'Newswire', icon: Newspaper },
-    { key: 'videos', label: 'Videos', icon: FilmStrip },
-    { key: 'games', label: 'Games', icon: GameController },
+    ['news', 'Newswire', Newspaper],
+    ['videos', 'Videos', FilmStrip],
+    ['games', 'Games', GameController],
   ];
 
   return (
     <>
-      <div className={`admin-composer ${menuOpen ? 'is-open' : ''}`}>
+      <div
+        className={`admin-composer ${
+          menuOpen ? 'is-open' : ''
+        }`}
+      >
         {menuOpen && (
-          <div className="admin-composer__menu" role="menu">
-            <div className="admin-composer__label">Configuration</div>
-            <button type="button" role="menuitem" onClick={() => open('newsletter')}>
+          <div
+            className="admin-composer__menu"
+            role="menu"
+          >
+            <div className="admin-composer__label">
+              Configuration
+            </div>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() =>
+                open('newsletter')
+              }
+            >
               <Newspaper weight="bold" />
               <span>Newsletter</span>
             </button>
-            <button type="button" role="menuitem" onClick={() => open('video')}>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() =>
+                open('video')
+              }
+            >
               <FilmStrip weight="bold" />
               <span>Video</span>
             </button>
-            <button type="button" role="menuitem" onClick={() => open('game')}>
+
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() =>
+                open('game')
+              }
+            >
               <GameController weight="bold" />
               <span>Game</span>
             </button>
+
             <button
               type="button"
               role="menuitem"
@@ -264,20 +383,38 @@ export function AdminComposer() {
         <button
           type="button"
           className="admin-composer__toggle"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label={menuOpen ? 'Close admin menu' : 'Open admin menu'}
+          onClick={() =>
+            setMenuOpen((open) => !open)
+          }
+          aria-label={
+            menuOpen
+              ? 'Close admin menu'
+              : 'Open admin menu'
+          }
           aria-expanded={menuOpen}
         >
-          {menuOpen ? <X weight="bold" /> : <Gear weight="bold" />}
+          {menuOpen ? (
+            <X weight="bold" />
+          ) : (
+            <Gear weight="bold" />
+          )}
         </button>
       </div>
 
-      <Modal open={!!type} onClose={closeComposer} labelledBy="admin-composer-title">
+      <Modal
+        open={!!type}
+        onClose={closeComposer}
+        labelledBy="admin-composer-title"
+      >
         <div className="admin-modal">
           <header>
             <div>
-              <h2 id="admin-composer-title">Publish {type}</h2>
+
+              <h2 id="admin-composer-title">
+                Publish {type}
+              </h2>
             </div>
+
             <button
               type="button"
               className="admin-modal__close"
@@ -290,37 +427,111 @@ export function AdminComposer() {
           </header>
 
           <form onSubmit={submit}>
+
             {type === 'newsletter' && (
               <>
-                <Field label="Title" value={form.title} onChange={set('title')} required />
-                <Field label="Excerpt" value={form.excerpt} onChange={set('excerpt')} />
-                <Text label="Body" value={form.body} onChange={set('body')} required />
-                <Field label="Image URL" value={form.image} onChange={set('image')} />
+                <Field
+                  label="Title"
+                  value={form.title}
+                  onChange={set('title')}
+                  required
+                />
+
+                <Field
+                  label="Excerpt"
+                  value={form.excerpt}
+                  onChange={set('excerpt')}
+                />
+
+                <Text
+                  label="Body"
+                  value={form.body}
+                  onChange={set('body')}
+                  required
+                />
+
+                <Field
+                  label="Image URL"
+                  value={form.image}
+                  onChange={set('image')}
+                />
               </>
             )}
 
             {type === 'video' && (
               <>
-                <Field label="Title" value={form.title} onChange={set('title')} required />
-                <Field label="Category" value={form.category} onChange={set('category')} required />
-                <Field label="Video URL" value={form.videoUrl} onChange={set('videoUrl')} />
-                <Field label="Thumbnail URL" value={form.thumbnail} onChange={set('thumbnail')} />
+                <Field
+                  label="Title"
+                  value={form.title}
+                  onChange={set('title')}
+                  required
+                />
+
+                <Field
+                  label="Category"
+                  value={form.category}
+                  onChange={set('category')}
+                  required
+                />
+
+                <Field
+                  label="Video URL"
+                  value={form.videoUrl}
+                  onChange={set('videoUrl')}
+                />
+
+                <Field
+                  label="Thumbnail URL"
+                  value={form.thumbnail}
+                  onChange={set('thumbnail')}
+                />
+
                 <Field
                   label="Duration (seconds)"
                   type="number"
                   min="0"
                   value={form.durationSeconds}
-                  onChange={set('durationSeconds')}
+                  onChange={set(
+                    'durationSeconds'
+                  )}
                 />
               </>
             )}
 
             {type === 'game' && (
               <>
-                <Field label="Title" value={form.title} onChange={set('title')} required />
-                <Field label="Slug" value={form.slug} onChange={set('slug')} required />
-                <Text label="Short description" value={form.shortDescription} onChange={set('shortDescription')} required />
-                <Text label="Description" value={form.description} onChange={set('description')} />
+                <Field
+                  label="Title"
+                  value={form.title}
+                  onChange={set('title')}
+                  required
+                />
+
+                <Field
+                  label="Slug"
+                  value={form.slug}
+                  onChange={set('slug')}
+                  required
+                />
+
+                <Text
+                  label="Short description"
+                  value={
+                    form.shortDescription
+                  }
+                  onChange={set(
+                    'shortDescription'
+                  )}
+                  required
+                />
+
+                <Text
+                  label="Description"
+                  value={form.description}
+                  onChange={set(
+                    'description'
+                  )}
+                />
 
                 <div className="admin-modal__row">
                   <Field
@@ -328,22 +539,89 @@ export function AdminComposer() {
                     as="select"
                     value={form.status}
                     onChange={set('status')}
-                    options={['announced', 'in_development', 'released']}
+                    options={[
+                      'announced',
+                      'in_development',
+                      'released',
+                    ]}
                   />
-                  <Field label="Release date" type="date" value={form.releaseDate} onChange={set('releaseDate')} />
+
+                  <Field
+                    label="Release date"
+                    type="date"
+                    value={
+                      form.releaseDate
+                    }
+                    onChange={set(
+                      'releaseDate'
+                    )}
+                  />
                 </div>
 
-                <Field label="Hero image URL" value={form.heroImage} onChange={set('heroImage')} />
-                <Field label="Cover image URL" value={form.coverImage} onChange={set('coverImage')} />
-                <Field label="Trailer URL" value={form.trailerUrl} onChange={set('trailerUrl')} />
-                <Field label="Purchase URL" value={form.purchaseUrl} onChange={set('purchaseUrl')} placeholder="https://store.steampowered.com/..." />
-                <Field label="Download URL" value={form.downloadUrl} onChange={set('downloadUrl')} placeholder="https://..." />
-                <Field label="Genres (comma separated)" value={form.genres} onChange={set('genres')} />
-                <Field label="Platforms (comma separated)" value={form.platforms} onChange={set('platforms')} />
+                <Field
+                  label="Hero image URL"
+                  value={form.heroImage}
+                  onChange={set(
+                    'heroImage'
+                  )}
+                />
+
+                <Field
+                  label="Cover image URL"
+                  value={form.coverImage}
+                  onChange={set(
+                    'coverImage'
+                  )}
+                />
+
+                <Field
+                  label="Trailer URL"
+                  value={form.trailerUrl}
+                  onChange={set(
+                    'trailerUrl'
+                  )}
+                />
+
+                <Field
+                  label="Purchase URL"
+                  value={form.purchaseUrl}
+                  onChange={set('purchaseUrl')}
+                  placeholder="https://store.steampowered.com/..."
+                />
+
+                <Field
+                  label="Download URL"
+                  value={form.downloadUrl}
+                  onChange={set('downloadUrl')}
+                  placeholder="https://..."
+                />
+
+                <Field
+                  label="Genres (comma separated)"
+                  value={form.genres}
+                  onChange={set('genres')}
+                />
+
+                <Field
+                  label="Platforms (comma separated)"
+                  value={form.platforms}
+                  onChange={set(
+                    'platforms'
+                  )}
+                />
 
                 <label className="admin-check">
-                  <input type="checkbox" checked={form.featured} onChange={set('featured')} />
-                  <span>Feature on homepage</span>
+                  <input
+                    type="checkbox"
+                    checked={form.featured}
+                    onChange={set(
+                      'featured'
+                    )}
+                  />
+
+                  <span>
+                    Feature on homepage
+                  </span>
                 </label>
               </>
             )}
@@ -358,24 +636,48 @@ export function AdminComposer() {
             {saved && (
               <p className="admin-modal__saved">
                 <CheckCircle weight="bold" />
-                <span>Published successfully.</span>
+                <span>
+                  Published successfully.
+                </span>
               </p>
             )}
 
-            <Button type="submit" disabled={saving}>
-              {saving ? 'Saving…' : 'Save & publish'}
+            <Button
+              type="submit"
+              disabled={saving}
+            >
+              {saving
+                ? 'Saving…'
+                : 'Save & publish'}
             </Button>
           </form>
         </div>
       </Modal>
 
-      <Modal open={manage} onClose={() => setManage(false)} labelledBy="admin-manage-title">
+      <Modal
+        open={manage}
+        onClose={() =>
+          setManage(false)
+        }
+        labelledBy="admin-manage-title"
+      >
         <div className="admin-manage">
           <header>
             <div>
-              <h2 id="admin-manage-title">Content</h2>
+
+              <h2 id="admin-manage-title">
+                Content
+              </h2>
             </div>
-            <button type="button" className="admin-modal__close" onClick={() => setManage(false)} aria-label="Close">
+
+            <button
+              type="button"
+              className="admin-modal__close"
+              onClick={() =>
+                setManage(false)
+              }
+              aria-label="Close"
+            >
               <X weight="bold" />
             </button>
           </header>
@@ -388,46 +690,88 @@ export function AdminComposer() {
           )}
 
           {loadingItems ? (
-            <p className="admin-manage__loading">Loading content…</p>
+            <p className="admin-manage__loading">
+              Loading content…
+            </p>
           ) : (
-            sections.map(({ key, label, icon: Icon }) => {
-              const list = items[key] || [];
-              return (
-                <section key={key} className="admin-manage__section">
-                  <div className="admin-manage__section-head">
-                    <h3>
-                      <Icon weight="bold" />
-                      {label}
-                    </h3>
-                    <span>{list.length}</span>
-                  </div>
+            sections.map(
+              ([kind, label, Icon]) => {
+                const list =
+                  items[kind] || [];
 
-                  {list.length === 0 ? (
-                    <p className="admin-manage__empty">No items published.</p>
-                  ) : (
-                    list.map((item) => {
-                      const deleteKey = `${key}:${item.id}`;
-                      return (
-                        <div className="admin-manage__item" key={item.id}>
-                          <div>
-                            <strong>{item.title}</strong>
-                            <small>{item.category || item.slug || item.status || 'Published'}</small>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => remove(key, item.id)}
-                            disabled={deleting === deleteKey}
-                            aria-label={`Delete ${item.title}`}
+                return (
+                  <section
+                    key={kind}
+                    className="admin-manage__section"
+                  >
+                    <div className="admin-manage__section-head">
+                      <h3>
+                        <Icon weight="bold" />
+                        {label}
+                      </h3>
+
+                      <span>
+                        {list.length}
+                      </span>
+                    </div>
+
+                    {list.length === 0 ? (
+                      <p className="admin-manage__empty">
+                        No items published.
+                      </p>
+                    ) : (
+                      list.map((item) => {
+                        const deleteKey = `${kind}:${item.id}`;
+
+                        return (
+                          <div
+                            className="admin-manage__item"
+                            key={item.id}
                           >
-                            {deleting === deleteKey ? <span>…</span> : <Trash weight="bold" />}
-                          </button>
-                        </div>
-                      );
-                    })
-                  )}
-                </section>
-              );
-            })
+                            <div>
+                              <strong>
+                                {item.title}
+                              </strong>
+
+                              <small>
+                                {item.category ||
+                                  item.slug ||
+                                  item.status ||
+                                  'Published'}
+                              </small>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                remove(
+                                  kind === 'news'
+                                    ? 'newsletter'
+                                    : kind,
+                                  item.id
+                                )
+                              }
+                              disabled={
+                                deleting ===
+                                deleteKey
+                              }
+                              aria-label={`Delete ${item.title}`}
+                            >
+                              {deleting ===
+                              deleteKey ? (
+                                <span>…</span>
+                              ) : (
+                                <Trash weight="bold" />
+                              )}
+                            </button>
+                          </div>
+                        );
+                      })
+                    )}
+                  </section>
+                );
+              }
+            )
           )}
         </div>
       </Modal>
@@ -435,15 +779,24 @@ export function AdminComposer() {
   );
 }
 
-function Field({ label, as = 'input', options = [], ...props }) {
+function Field({
+  label,
+  as = 'input',
+  options = [],
+  ...props
+}) {
   return (
     <label className="admin-field">
       <span>{label}</span>
+
       {as === 'select' ? (
         <select {...props}>
-          {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
+          {options.map((option) => (
+            <option
+              key={option}
+              value={option}
+            >
+              {option}
             </option>
           ))}
         </select>
@@ -454,11 +807,18 @@ function Field({ label, as = 'input', options = [], ...props }) {
   );
 }
 
-function Text({ label, ...props }) {
+function Text({
+  label,
+  ...props
+}) {
   return (
     <label className="admin-field">
       <span>{label}</span>
-      <textarea rows="6" {...props} />
+
+      <textarea
+        rows="6"
+        {...props}
+      />
     </label>
   );
 }
