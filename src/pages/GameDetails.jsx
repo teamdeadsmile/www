@@ -1,39 +1,45 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { api } from "../services/api";
-import { GameHero } from "../components/games/GameHero";
-import { GameMeta } from "../components/games/GameMeta";
-import { GameGrid } from "../components/games/GameGrid";
-import { ErrorState } from "../components/ui/ErrorState";
-import { Skeleton } from "../components/ui/Skeleton";
-import { Lightbox } from "../components/ui/Lightbox";
-import { ArrowLeft, ShoppingCart, Heart, Play, DownloadSimple } from "@phosphor-icons/react";
-import { useLanguage } from "../context/LanguageContext";
-import "./GameDetails.css";
+import { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { api } from '../services/api';
+import { GameHero } from '../components/games/GameHero';
+import { GameMeta } from '../components/games/GameMeta';
+import { GameGrid } from '../components/games/GameGrid';
+import { ErrorState } from '../components/ui/ErrorState';
+import { Skeleton } from '../components/ui/Skeleton';
+import { Lightbox } from '../components/ui/Lightbox';
+import { useWishlist } from '../hooks/useWishlist';
+import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../context/LanguageContext';
+import { ArrowLeft, ShoppingCart, Heart, HeartStraight, Play, DownloadSimple } from '@phosphor-icons/react';
+import './GameDetails.css';
 
 export function GameDetails() {
   const { slug } = useParams();
   const { t } = useLanguage();
+  const { status: authStatus } = useAuth();
   const [state, setState] = useState({
-    status: "loading",
+    status: 'loading',
     game: null,
     error: null,
   });
   const [revision, setRevision] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
+  const game = state.game;
+  const { inWishlist, loading: wishlistLoading, toggle } = useWishlist(game?.id);
+
   useEffect(() => {
     let cancelled = false;
-    setState({ status: "loading", game: null, error: null });
+    setState({ status: 'loading', game: null, error: null });
 
     api.get(`/games/${slug}`)
       .then((game) => {
-        if (!cancelled) setState({ status: "success", game, error: null });
+        if (!cancelled) setState({ status: 'success', game, error: null });
       })
       .catch((err) => {
         if (!cancelled) {
           setState({
-            status: err.status === 404 ? "not-found" : "error",
+            status: err.status === 404 ? 'not-found' : 'error',
             game: null,
             error: err.message,
           });
@@ -42,8 +48,6 @@ export function GameDetails() {
 
     return () => { cancelled = true; };
   }, [slug, revision]);
-
-  const game = state.game;
 
   const totalImages = 15;
   const screenshots = game
@@ -63,15 +67,15 @@ export function GameDetails() {
     setSelectedImageIndex((selectedImageIndex + 1) % screenshots.length);
   };
 
-  if (state.status === "loading") {
+  if (state.status === 'loading') {
     return (
       <div className="game-details container">
-        <Skeleton style={{ height: "60vh", marginTop: "var(--header-height)" }} />
+        <Skeleton style={{ height: '60vh', marginTop: 'var(--header-height)' }} />
       </div>
     );
   }
 
-  if (state.status === "not-found") {
+  if (state.status === 'not-found') {
     return (
       <div className="container game-details__notfound">
         <ErrorState
@@ -86,7 +90,7 @@ export function GameDetails() {
     );
   }
 
-  if (state.status === "error") {
+  if (state.status === 'error') {
     return (
       <div className="container game-details__notfound">
         <Link to="/games" className="back-link">
@@ -107,23 +111,42 @@ export function GameDetails() {
 
       <div className="container game-details__body">
         <div className="game-details__main">
-          <h2>{t("games.about")}</h2>
+          <h2>{t('games.about')}</h2>
           <p>{game.description || game.shortDescription}</p>
 
           <div className="game-details__actions">
-            <a
-              href={game.purchaseUrl || "#"}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn--primary game-details__btn"
-            >
-              <ShoppingCart weight="bold" />
-              <span>Get Game</span>
-            </a>
-            <button className="btn btn--secondary game-details__btn">
-              <Heart weight="bold" />
-              <span>Wishlist</span>
-            </button>
+            {game.purchaseUrl && (
+              <a
+                href={game.purchaseUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn--primary game-details__btn"
+              >
+                <ShoppingCart weight="bold" />
+                <span>Get Game</span>
+              </a>
+            )}
+
+            {authStatus === 'authenticated' && (
+              <button
+                className={`btn game-details__btn ${inWishlist ? 'btn--primary' : 'btn--secondary'}`}
+                onClick={toggle}
+                disabled={wishlistLoading}
+              >
+                {inWishlist ? (
+                  <>
+                    <HeartStraight weight="fill" />
+                    <span>Wishlisted</span>
+                  </>
+                ) : (
+                  <>
+                    <Heart weight="bold" />
+                    <span>Wishlist</span>
+                  </>
+                )}
+              </button>
+            )}
+
             {game.trailerUrl && (
               <a
                 href={game.trailerUrl}
@@ -135,6 +158,7 @@ export function GameDetails() {
                 <span>Trailer</span>
               </a>
             )}
+
             {game.downloadUrl && (
               <a
                 href={game.downloadUrl}
@@ -187,7 +211,7 @@ export function GameDetails() {
 
       {game.relatedGames?.length > 0 && (
         <section className="container game-details__related">
-          <h2>{t("games.related")}</h2>
+          <h2>{t('games.related')}</h2>
           <GameGrid games={game.relatedGames} />
         </section>
       )}

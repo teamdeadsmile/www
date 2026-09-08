@@ -12,6 +12,7 @@ import { Privacy } from './pages/Privacy';
 import { Terms } from './pages/Terms';
 import { Studio } from './pages/Studio';
 import { News } from './pages/News';
+import { Wishlist } from './pages/Wishlist';
 import { Videos } from './pages/Videos';
 import { Downloads } from './pages/Downloads';
 import { Store } from './pages/Store';
@@ -28,6 +29,7 @@ export default function App() {
     <Route path="/presskit" element={<PressKit />} />
     <Route path="/games" element={<Games />} />
     <Route path="/games/:slug" element={<GameDetails />} />
+    <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
     <Route path="/news" element={<News />} />
     <Route path="/news/:slug" element={<News />} />
     <Route path="/videos" element={<Videos />} />
