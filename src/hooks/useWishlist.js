@@ -1,21 +1,30 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { api } from '../services/api';
 
 export function useWishlist(gameId) {
   const [inWishlist, setInWishlist] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const check = useCallback(async () => {
+    if (!gameId || typeof gameId !== 'number') {
+      setLoading(false);
+      return;
+    }
     try {
       const res = await api.get(`/wishlist/${gameId}/check`);
       setInWishlist(res.inWishlist);
-      return res.inWishlist;
     } catch {
-      return false;
+      setInWishlist(false);
+    } finally {
+      setLoading(false);
     }
   }, [gameId]);
 
   const toggle = useCallback(async () => {
+    if (!gameId || typeof gameId !== 'number') {
+      console.warn('Invalid gameId for wishlist toggle');
+      return false;
+    }
     setLoading(true);
     try {
       if (inWishlist) {
@@ -26,12 +35,17 @@ export function useWishlist(gameId) {
         setInWishlist(true);
       }
       return true;
-    } catch {
+    } catch (err) {
+      console.error('Wishlist toggle error:', err);
       return false;
     } finally {
       setLoading(false);
     }
   }, [gameId, inWishlist]);
 
-  return { inWishlist, loading, check, toggle };
+  useEffect(() => {
+    check();
+  }, [check]);
+
+  return { inWishlist, loading, toggle };
 }

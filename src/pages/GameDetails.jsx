@@ -127,7 +127,7 @@ export function GameDetails() {
               </a>
             )}
 
-            {authStatus === 'authenticated' && (
+            {game && authStatus === 'authenticated' && (
               <button
                 className={`btn game-details__btn ${inWishlist ? 'btn--primary' : 'btn--secondary'}`}
                 onClick={toggle}
