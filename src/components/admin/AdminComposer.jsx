@@ -315,7 +315,7 @@ export function AdminComposer() {
 
   const sections = [
     ['news', 'Newswire', Newspaper],
-    ['video', 'Videos', FilmStrip],
+    ['videos', 'Video', FilmStrip],
     ['games', 'Games', GameController],
   ];
 
