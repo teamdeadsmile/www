@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { ArrowUpRight, Plus, Minus } from '@phosphor-icons/react';
+import { ArrowUpRight, Plus, Minus, Envelope, Chat, Question } from '@phosphor-icons/react';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../services/api';
 import { Reveal } from '../components/ui/Reveal';
@@ -8,40 +8,62 @@ import './Support.css';
 import { ArrowLeft } from "@phosphor-icons/react";
 
 const faqs = [
-  'How do I update a game?',
-  'Where can I find system requirements?',
-  'How do I recover my account?',
-  'Where can I report a technical issue?',
+  {
+    question: 'How do I update my game?',
+    answer: 'Game updates are automatically downloaded when you launch the game. If you experience issues, verify your game files or contact support.',
+  },
+  {
+    question: 'What are the system requirements?',
+    answer: 'Each game has specific system requirements. Visit the game\'s detail page and check the "System Requirements" section for minimum and recommended specifications.',
+  },
+  {
+    question: 'How do I recover my account?',
+    answer: 'Use the "Forgot password" option on the login page. If you still can\'t access your account, contact our support team with your registered email address.',
+  },
+  {
+    question: 'Where do I report a technical issue?',
+    answer: 'You can report technical issues through the form on this page or by emailing deadsmilegames@gmail.com. Please include your system specs and steps to reproduce the issue.',
+  },
+  {
+    question: 'How do I refund a purchase?',
+    answer: 'Refunds are handled on a case-by-case basis. Contact our support team via the form below or email us at deadsmilegames@gmail.com within 14 days of purchase.',
+  },
 ];
 
 export function Support() {
   const { t } = useLanguage();
 
-  const [open, setOpen] = useState(0);
+  const [openIndex, setOpenIndex] = useState(null);
   const [form, setForm] = useState({
     email: '',
     category: 'technical',
     message: '',
   });
-  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   async function submit(e) {
     e.preventDefault();
-    setMessage('');
+    setStatus('');
+    setSubmitting(true);
 
     try {
       await api.post('/support', form);
-
-      setMessage('Request received.');
-
-      setForm((value) => ({
-        ...value,
-        message: '',
-      }));
+      setStatus('success');
+      setForm((prev) => ({ ...prev, message: '' }));
+      setTimeout(() => setStatus(''), 5000);
     } catch (err) {
-      setMessage(err?.message || 'Unable to send request.');
+      console.error('Support form error:', err);
+      setStatus('error');
+      setTimeout(() => setStatus(''), 5000);
+    } finally {
+      setSubmitting(false);
     }
   }
+
+  const toggleFaq = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <div className="support-page container">
@@ -51,59 +73,48 @@ export function Support() {
       </Link>
 
       <Reveal>
-        <h1>{t('support.title')}</h1>
-
-        <p className="support-page__intro">
-          {t('support.intro')}
-        </p>
+        <div className="support-page__header">
+          <h1>{t('support.title') || 'Support'}</h1>
+          <p className="support-page__intro">
+            {t('support.intro') || 'Need help? Find answers to common questions or reach out to our team. We\'re here to help with game issues, account problems, and more.'}
+          </p>
+        </div>
       </Reveal>
 
       <section className="support-page__grid">
+        {/* FAQ Column */}
         <Reveal>
-          <div className="support-card">
-
-            <h2>{t('support.faq')}</h2>
+          <div className="support-card support-card--faq">
+            <div className="support-card__icon">
+              <Question weight="bold" size={28} />
+            </div>
+            <h2>{t('support.faq') || 'Frequently Asked'}</h2>
+            <p className="support-card__sub">Quick answers to common questions.</p>
 
             <div className="support-faq">
-              {faqs.map((question, index) => {
-                const isOpen = open === index;
+              {faqs.map((faq, index) => {
+                const isOpen = openIndex === index;
 
                 return (
-                  <div
-                    className="support-faq-item"
-                    key={question}
-                  >
+                  <div className="support-faq-item" key={index}>
                     <button
                       type="button"
                       className="support-faq-question"
-                      onClick={() =>
-                        setOpen(isOpen ? -1 : index)
-                      }
+                      onClick={() => toggleFaq(index)}
                       aria-expanded={isOpen}
                     >
-                      <span>{question}</span>
-
+                      <span>{faq.question}</span>
                       {isOpen ? (
-                        <Minus
-                          size={20}
-                          weight="bold"
-                          aria-hidden="true"
-                        />
+                        <Minus size={20} weight="bold" aria-hidden="true" />
                       ) : (
-                        <Plus
-                          size={20}
-                          weight="bold"
-                          aria-hidden="true"
-                        />
+                        <Plus size={20} weight="bold" aria-hidden="true" />
                       )}
                     </button>
 
                     {isOpen && (
-                      <p className="support-faq-answer">
-                        Find the relevant game, account or
-                        technical guidance through the
-                        DEADSMILE support team.
-                      </p>
+                      <div className="support-faq-answer">
+                        <p>{faq.answer}</p>
+                      </div>
                     )}
                   </div>
                 );
@@ -112,8 +123,100 @@ export function Support() {
           </div>
         </Reveal>
 
-      
+        {/* Contact Form Column */}
+        <Reveal delay={100}>
+          <div className="support-card support-card--accent">
+            <div className="support-card__icon">
+              <Envelope weight="bold" size={28} />
+            </div>
+            <h2>{t('support.contact') || 'Contact Us'}</h2>
+            <p className="support-card__sub">
+              Send us a message and we'll get back to you as soon as possible.
+            </p>
 
+            <form onSubmit={submit} className="support-form" noValidate>
+              <div className="support-form__field">
+                <label htmlFor="support-email">Email</label>
+                <input
+                  id="support-email"
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                />
+              </div>
+
+              <div className="support-form__field">
+                <label htmlFor="support-category">Category</label>
+                <select
+                  id="support-category"
+                  value={form.category}
+                  onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
+                >
+                  <option value="technical">Technical Issue</option>
+                  <option value="account">Account Help</option>
+                  <option value="game">Game Support</option>
+                  <option value="faq">FAQ / General</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div className="support-form__field">
+                <label htmlFor="support-message">Message</label>
+                <textarea
+                  id="support-message"
+                  required
+                  rows="4"
+                  value={form.message}
+                  onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
+                  placeholder="Describe your issue in detail..."
+                />
+              </div>
+
+              <button type="submit" className="support-form__submit" disabled={submitting}>
+                {submitting ? 'Sending…' : 'Send Message'}
+                <ArrowUpRight size={18} weight="bold" />
+              </button>
+
+              {status === 'success' && (
+                <p className="support-form__status support-form__status--success">
+                  ✓ Message sent successfully. We'll get back to you soon.
+                </p>
+              )}
+              {status === 'error' && (
+                <p className="support-form__status support-form__status--error">
+                  ✗ Something went wrong. Please try again.
+                </p>
+              )}
+            </form>
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="support-page__extra">
+        <Reveal>
+          <div className="support-extra">
+            <div className="support-extra__item">
+              <Chat weight="bold" size={24} />
+              <div>
+                <h3>Live Status</h3>
+                <p>All systems operational. Games and services are running smoothly.</p>
+              </div>
+            </div>
+            <div className="support-extra__item">
+              <Envelope weight="bold" size={24} />
+              <div>
+                <h3>Direct Email</h3>
+                <p>
+                  For urgent issues, reach us directly at{' '}
+                  <a href="mailto:deadsmilegames@gmail.com">deadsmilegames@gmail.com</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </section>
     </div>
   );
