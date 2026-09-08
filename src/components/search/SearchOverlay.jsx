@@ -37,7 +37,7 @@ export function SearchOverlay({ open, onClose }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search DEADSMILE GAMES…"
+          placeholder="Search Deadsmile Games…"
           className="search-overlay__input"
           aria-label="Search games"
         />

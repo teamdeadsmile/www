@@ -76,7 +76,7 @@ export function PressKit() {
           <h1>Press Kit</h1>
           <p className="press-kit__intro">
             Resources for journalists, streamers, and content creators.
-            All assets are free to use for coverage and promotion of DEADSMILE GAMES.
+            All assets are free to use for coverage and promotion of Deadsmile Games.
           </p>
           <div className="press-kit__contact">
             <Envelope weight="bold" />
@@ -175,7 +175,7 @@ export function PressKit() {
           <ul>
             <li>All assets are provided for <strong>editorial and promotional</strong> purposes only.</li>
             <li>You may crop, resize, or overlay text on images, but do not alter logos or artwork in a misleading way.</li>
-            <li>Always credit <strong>DEADSMILE GAMES</strong> when using these assets.</li>
+            <li>Always credit <strong>Deadsmile Games</strong> when using these assets.</li>
             <li>For commercial use outside editorial coverage, please contact <a href="mailto:deadsmilegames@gmail.com">deadsmilegames@gmail.com</a>.</li>
           </ul>
         </Reveal>

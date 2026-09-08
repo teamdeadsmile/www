@@ -14,7 +14,7 @@ export function Privacy() {
       <Reveal>
         <h1>Privacy Policy</h1>
         <p className="privacy-page__intro">
-          DEADSMILE GAMES respects your privacy. This policy explains how we collect, use, and protect your personal data.
+          Deadsmile Games respects your privacy. This policy explains how we collect, use, and protect your personal data.
         </p>
       </Reveal>
 

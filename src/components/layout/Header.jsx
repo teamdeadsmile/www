@@ -63,7 +63,7 @@ export function Header({ onOpenSearch }) {
                     <Link
                         to="/"
                         className="site-header__brand"
-                        aria-label="DEADSMILE Games"
+                        aria-label="Deadsmile Games"
                     >
                         <img
                             src="/assets/branding/deadsmile-mark.svg"

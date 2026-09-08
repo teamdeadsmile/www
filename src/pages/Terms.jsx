@@ -14,7 +14,7 @@ export function Terms() {
       <Reveal>
         <h1>Terms of Service</h1>
         <p className="terms-page__intro">
-          By using DEADSMILE GAMES, you agree to the following terms and conditions.
+          By using Deadsmile Games, you agree to the following terms and conditions.
           Please read them carefully.
         </p>
       </Reveal>
@@ -23,7 +23,7 @@ export function Terms() {
         <div className="terms-block">
           <h2>1. Acceptance of Terms</h2>
           <p>
-            By accessing or using the DEADSMILE GAMES website, you agree to be bound by these Terms of Service.
+            By accessing or using the Deadsmile Games website, you agree to be bound by these Terms of Service.
             If you do not agree, please do not use our services.
           </p>
         </div>
@@ -48,7 +48,7 @@ export function Terms() {
           <h2>4. Intellectual Property</h2>
           <p>
             All content on this site, including games, artwork, text, logos, and code, is the property of
-            DEADSMILE GAMES or its licensors and is protected by copyright and other intellectual property laws.
+            Deadsmile Games or its licensors and is protected by copyright and other intellectual property laws.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export function Terms() {
         <div className="terms-block">
           <h2>6. Limitation of Liability</h2>
           <p>
-            To the fullest extent permitted by law, DEADSMILE GAMES shall not be liable for any indirect,
+            To the fullest extent permitted by law, Deadsmile Games shall not be liable for any indirect,
             incidental, or consequential damages arising from your use of the site.
           </p>
         </div>
