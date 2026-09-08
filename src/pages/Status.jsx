@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, XCircle, RefreshCw } from '@phosphor-icons/react';
+import { ArrowLeft, CheckCircle, XCircle, ArrowClockwise } from '@phosphor-icons/react';
 import { Reveal } from '../components/ui/Reveal';
 import './Status.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://apideadsmile.vercel.app/api';
 
-// Definição dos serviços a serem monitorados
 const SERVICES = [
   {
     category: 'Core',
@@ -39,7 +38,6 @@ const SERVICES = [
   },
 ];
 
-// Timeout para cada requisição (5 segundos)
 const REQUEST_TIMEOUT = 5000;
 
 async function checkService(endpoint) {
@@ -51,16 +49,12 @@ async function checkService(endpoint) {
     const res = await fetch(url, {
       signal: controller.signal,
       credentials: 'include',
-      headers: { 'Accept': 'application/json' },
+      headers: { Accept: 'application/json' },
     });
     clearTimeout(timeout);
-
-    // Consideramos "up" se resposta for 2xx, 3xx ou 4xx (exceto 5xx)
-    // Para endpoints que exigem autenticação, 401 é esperado e OK
     return res.status < 500;
-  } catch (err) {
+  } catch {
     clearTimeout(timeout);
-    // Se for abort (timeout) ou erro de rede, consideramos down
     return false;
   }
 }
@@ -70,7 +64,6 @@ export function Status() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Função que verifica todos os serviços
   const checkAll = async () => {
     setLoading(true);
     const results = {};
@@ -88,17 +81,15 @@ export function Status() {
     setLoading(false);
   };
 
-  // Inicializa e configura polling a cada 5 minutos
   useEffect(() => {
     checkAll();
-    const interval = setInterval(checkAll, 5 * 60 * 1000); // 5 minutos
+    const interval = setInterval(checkAll, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Calcula o status geral (todos verdes?)
-  const allUp = Object.values(statuses).every(v => v === true);
+  const allUp = Object.values(statuses).every((v) => v === true);
   const totalChecks = Object.keys(statuses).length;
-  const upCount = Object.values(statuses).filter(v => v === true).length;
+  const upCount = Object.values(statuses).filter((v) => v === true).length;
 
   return (
     <div className="status-page container">
@@ -119,23 +110,23 @@ export function Status() {
                 <span>Checking…</span>
               ) : allUp ? (
                 <>
-                  <CheckCircle weight="fill" size={20} />
+                  <CheckCircle weight="fill" size={20} className="up" />
                   <span>All systems operational</span>
                 </>
               ) : (
                 <>
-                  <XCircle weight="fill" size={20} />
+                  <XCircle weight="fill" size={20} className="down" />
                   <span>Some services are experiencing issues</span>
                 </>
               )}
             </div>
             <div className="status-meta">
-              <span>{upCount} / {totalChecks} services up</span>
-              {lastUpdate && (
-                <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
-              )}
+              <span>
+                {upCount} / {totalChecks} services up
+              </span>
+              {lastUpdate && <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>}
               <button onClick={checkAll} className="refresh-btn" disabled={loading}>
-                <RefreshCw weight="bold" size={16} />
+                <ArrowClockwise weight="bold" size={16} />
                 Refresh
               </button>
             </div>
@@ -146,13 +137,13 @@ export function Status() {
       <div className="status-grid">
         {SERVICES.map((category, idx) => {
           const categoryKey = category.category;
-          const items = category.items.map(item => {
+          const items = category.items.map((item) => {
             const key = `${categoryKey}-${item.name}`;
             const isUp = statuses[key];
             return { ...item, key, isUp };
           });
 
-          const allUpCategory = items.every(item => item.isUp === true);
+          const allUpCategory = items.every((item) => item.isUp === true);
 
           return (
             <Reveal key={categoryKey} delay={idx * 80}>
