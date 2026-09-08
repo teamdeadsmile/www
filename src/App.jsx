@@ -19,6 +19,7 @@ import { Store } from './pages/Store';
 import { Support } from './pages/Support';
 import { PressKit } from './pages/PressKit';
 import { NotFound } from './pages/NotFound';
+import { Status } from './pages/Status'
 import { PublicProfile } from './pages/PublicProfile';
 
 export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
     <Route path="/search" element={<Search />} />
     <Route path="/login" element={<Login />} />
     <Route path="/register" element={<Register />} />
+    <Route path="/status" element={<Status />} />
     <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
     <Route path="/profile/:username" element={<PublicProfile />} />
     <Route path="*" element={<NotFound />} />
