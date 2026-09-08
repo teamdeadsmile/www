@@ -3,6 +3,7 @@
   padding-top: calc(var(--header-height) + 130px);
   text-align: center;
 }
+
 .game-details__body {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(250px, 0.65fr);
@@ -10,35 +11,108 @@
   padding-top: clamp(80px, 10vw, 140px);
   padding-bottom: 110px;
 }
+
 .game-details__main h2,
 .game-details__related h2 {
   font-family: var(--font-display);
   font-size: clamp(2.8rem, 5vw, 5rem);
   text-transform: none;
 }
+
 .game-details__main > p {
   margin: 26px 0 55px;
   color: #a0a09b;
   font-size: 1.04rem;
   line-height: 1.8;
 }
+
+.game-details__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 60px;
+}
+
+.game-details__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px;
+  min-height: 50px;
+  font-size: 0.9rem;
+}
+
+.game-details__screenshots {
+  margin-top: 20px;
+}
+
+.game-details__screenshots-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+}
+
+.game-details__screenshots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.game-details__screenshot-item {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.game-details__screenshot-item:hover {
+  transform: scale(1.02);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.game-details__screenshot-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.game-details__screenshot-item:hover img {
+  transform: scale(1.05);
+}
+
+.game-details__screenshots-empty {
+  color: #777;
+  font-size: 0.95rem;
+  padding: 20px 0;
+}
+
 .game-details__aside {
   padding-top: 18px;
 }
+
 .game-details__trailer {
   width: 100%;
   margin-top: 28px;
   border-radius: 28px;
   overflow: hidden;
 }
+
 .game-details__related {
   padding-top: 100px;
   padding-bottom: 130px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 .game-details__related h2 {
   margin-bottom: 42px;
 }
+
 @media (max-width: 900px) {
   .game-details__body {
     grid-template-columns: 1fr;
@@ -50,5 +124,21 @@
   .game-details__related {
     padding-top: 75px;
     padding-bottom: 90px;
+  }
+  .game-details__screenshots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .game-details__actions {
+    flex-direction: column;
+  }
+  .game-details__btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .game-details__screenshots-grid {
+    grid-template-columns: 1fr;
   }
 }

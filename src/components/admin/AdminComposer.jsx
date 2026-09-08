@@ -36,6 +36,8 @@ const initial = {
   featured: false,
   genres: '',
   platforms: '',
+  purchaseUrl: '',
+  downloadUrl: '',
 };
 
 function normalizeList(response) {
@@ -192,6 +194,8 @@ export function AdminComposer() {
           coverImage: form.coverImage,
           trailerUrl: form.trailerUrl || null,
           featured: form.featured,
+          purchaseUrl: form.purchaseUrl || null,
+          downloadUrl: form.downloadUrl || null,
 
           genres: form.genres
             .split(',')
@@ -576,6 +580,20 @@ export function AdminComposer() {
                   onChange={set(
                     'trailerUrl'
                   )}
+                />
+
+                <Field
+                  label="Purchase URL"
+                  value={form.purchaseUrl}
+                  onChange={set('purchaseUrl')}
+                  placeholder="https://store.steampowered.com/..."
+                />
+
+                <Field
+                  label="Download URL"
+                  value={form.downloadUrl}
+                  onChange={set('downloadUrl')}
+                  placeholder="https://..."
                 />
 
                 <Field
