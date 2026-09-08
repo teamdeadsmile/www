@@ -1,45 +1,47 @@
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { api } from '../services/api';
 
+function isValidUUID(str) {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
 export function useWishlist(gameId) {
   const [inWishlist, setInWishlist] = useState(false);
   const [loading, setLoading] = useState(true);
-  const numericGameId = useMemo(() => {
-    if (typeof gameId === 'number') return gameId;
-    if (typeof gameId === 'string') {
-      const num = Number(gameId);
-      return isNaN(num) ? null : num;
-    }
-    return null;
+
+  const validGameId = useMemo(() => {
+    if (!gameId || typeof gameId !== 'string') return null;
+    return isValidUUID(gameId) ? gameId : null;
   }, [gameId]);
 
   const check = useCallback(async () => {
-    if (!numericGameId || !Number.isInteger(numericGameId)) {
+    if (!validGameId) {
       setLoading(false);
       return;
     }
     try {
-      const res = await api.get(`/wishlist/${numericGameId}/check`);
+      const res = await api.get(`/wishlist/${validGameId}/check`);
       setInWishlist(res.inWishlist);
     } catch {
       setInWishlist(false);
     } finally {
       setLoading(false);
     }
-  }, [numericGameId]);
+  }, [validGameId]);
 
   const toggle = useCallback(async () => {
-    if (!numericGameId || !Number.isInteger(numericGameId)) {
+    if (!validGameId) {
       console.warn('Invalid gameId for wishlist toggle:', gameId);
       return false;
     }
     setLoading(true);
     try {
       if (inWishlist) {
-        await api.delete(`/wishlist/${numericGameId}`);
+        await api.delete(`/wishlist/${validGameId}`);
         setInWishlist(false);
       } else {
-        await api.post('/wishlist', { gameId: numericGameId });
+        await api.post('/wishlist', { gameId: validGameId });
         setInWishlist(true);
       }
       return true;
@@ -49,7 +51,7 @@ export function useWishlist(gameId) {
     } finally {
       setLoading(false);
     }
-  }, [numericGameId, inWishlist, gameId]);
+  }, [validGameId, inWishlist, gameId]);
 
   useEffect(() => {
     check();

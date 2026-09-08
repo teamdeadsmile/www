@@ -26,9 +26,9 @@ export function GameDetails() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const game = state.game;
-  const numericGameId = game?.id ? Number(game.id) : null;
-  const isValidGameId = numericGameId && !isNaN(numericGameId) && Number.isInteger(numericGameId);
-  const { inWishlist, loading: wishlistLoading, toggle } = useWishlist(isValidGameId ? numericGameId : null);
+  const gameId = game?.id || null;
+  const isValidGameId = gameId && typeof gameId === 'string' && gameId.length > 0;
+  const { inWishlist, loading: wishlistLoading, toggle } = useWishlist(isValidGameId ? gameId : null);
 
   useEffect(() => {
     let cancelled = false;
