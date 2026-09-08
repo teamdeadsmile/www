@@ -4,35 +4,35 @@ import { api } from '../services/api';
 export function useWishlist(gameId) {
   const [inWishlist, setInWishlist] = useState(false);
   const [loading, setLoading] = useState(true);
+  const numericGameId = typeof gameId === 'number' ? gameId : Number(gameId);
 
   const check = useCallback(async () => {
-    // Se gameId for undefined/null/Nan, não faz a requisição
-    if (!gameId || typeof gameId !== 'number' || isNaN(gameId)) {
+    if (!numericGameId || isNaN(numericGameId) || !Number.isInteger(numericGameId)) {
       setLoading(false);
       return;
     }
     try {
-      const res = await api.get(`/wishlist/${gameId}/check`);
+      const res = await api.get(`/wishlist/${numericGameId}/check`);
       setInWishlist(res.inWishlist);
     } catch {
       setInWishlist(false);
     } finally {
       setLoading(false);
     }
-  }, [gameId]);
+  }, [numericGameId]);
 
   const toggle = useCallback(async () => {
-    if (!gameId || typeof gameId !== 'number' || isNaN(gameId)) {
+    if (!numericGameId || isNaN(numericGameId) || !Number.isInteger(numericGameId)) {
       console.warn('Invalid gameId for wishlist toggle:', gameId);
       return false;
     }
     setLoading(true);
     try {
       if (inWishlist) {
-        await api.delete(`/wishlist/${gameId}`);
+        await api.delete(`/wishlist/${numericGameId}`);
         setInWishlist(false);
       } else {
-        await api.post('/wishlist', { gameId });
+        await api.post('/wishlist', { gameId: numericGameId });
         setInWishlist(true);
       }
       return true;
@@ -42,7 +42,7 @@ export function useWishlist(gameId) {
     } finally {
       setLoading(false);
     }
-  }, [gameId, inWishlist]);
+  }, [numericGameId, inWishlist, gameId]);
 
   useEffect(() => {
     check();
