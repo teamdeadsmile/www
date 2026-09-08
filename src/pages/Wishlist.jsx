@@ -5,6 +5,7 @@ import { api } from '../services/api';
 import { GameCard } from '../components/games/GameCard';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ArrowLeft, HeartStraight } from '@phosphor-icons/react';
+import { resolveAssetUrl } from '../utils/resolveAsset';
 import './Wishlist.css';
 
 export function Wishlist() {
@@ -90,7 +91,13 @@ export function Wishlist() {
       ) : (
         <div className="wishlist-page__grid">
           {games.map((game) => (
-            <GameCard key={game.id} game={game} />
+            <GameCard
+              key={game.id}
+              game={{
+                ...game,
+                coverImage: resolveAssetUrl(game.cover_image || game.coverImage || game.heroImage),
+              }}
+            />
           ))}
         </div>
       )}
