@@ -46,8 +46,7 @@ export function PublicProfile() {
                         )}
                     </div>
                     <div>
-                        <span>DEADSMILE COMMUNITY</span>
-                        <h1>{profile.username}</h1>
+                        <h1>@{profile.username}</h1>
                         <p>{profile.bio || "No bio yet."}</p>
                     </div>
                 </div>

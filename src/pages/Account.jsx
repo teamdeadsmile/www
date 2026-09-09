@@ -214,7 +214,7 @@ export function Account() {
                                 <label>
                                     Username
                                     <input
-                                        value={"@"+form.username.toLowerCase()}
+                                        value={form.username.toLowerCase()}
                                         onChange={set("username")}
                                         Placeholder="@username"
                                         minLength={3}
