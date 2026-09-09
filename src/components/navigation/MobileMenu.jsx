@@ -25,10 +25,10 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
     const links = [
         ['/', 'nav.home'],
         ['/games', 'nav.games'],
+        ['/downloads', 'nav.downloads'],
         ['/news', 'nav.news'],
         ['/videos', 'nav.videos'],
         ['/support', 'nav.support'],
-        ['/studio', 'nav.studio'],
     ];
 
     return (

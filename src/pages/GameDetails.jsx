@@ -50,8 +50,6 @@ export function GameDetails() {
 
     return () => { cancelled = true; };
   }, [slug, revision]);
-
-  // Use screenshots from the backend if available; fall back to local asset paths
   const screenshots = game
     ? (game.screenshots && game.screenshots.length > 0
         ? game.screenshots

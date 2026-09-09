@@ -73,8 +73,6 @@
   line-height: 1.6;
   margin-bottom: 32px;
 }
-
-/* FAQ */
 .support-faq {
   border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
@@ -128,8 +126,6 @@
 .support-faq-answer p {
   margin: 0;
 }
-
-/* Accent card (form) */
 .support-card--accent {
   background: #f0f0eb;
   color: #0b0b0b;
@@ -172,8 +168,6 @@
 .support-card--accent .support-faq-question:hover svg {
   color: #000;
 }
-
-/* Form */
 .support-form {
   display: flex;
   flex-direction: column;
@@ -295,8 +289,6 @@
   background: rgba(220, 80, 80, 0.15);
   color: #ef5350;
 }
-
-/* Extra section */
 .support-page__extra {
   margin-top: 80px;
   padding-top: 60px;
@@ -347,8 +339,6 @@
 .support-extra__item a:hover {
   border-color: #fff;
 }
-
-/* Back link */
 .support-page .back-link {
   display: inline-flex;
   align-items: center;
@@ -366,8 +356,6 @@
 .support-page .back-link:hover {
   color: #fff;
 }
-
-/* Responsive */
 @media (max-width: 950px) {
   .support-page {
     padding-top: calc(var(--header-height) + 90px);
@@ -440,7 +428,6 @@
     height: 48px;
   }
 }
-/* ========== STATUS SYNC ========== */
 .support-extra__item .status-icon-wrapper {
   flex-shrink: 0;
   display: flex;

@@ -20,7 +20,6 @@ export function useWishlist(gameId) {
   const isAuthenticated = authStatus === 'authenticated';
 
   const check = useCallback(async () => {
-    // Skip the check if not authenticated or no valid game ID
     if (!validGameId || !isAuthenticated) {
       setInWishlist(false);
       setLoading(false);
@@ -64,7 +63,6 @@ export function useWishlist(gameId) {
   }, [validGameId, inWishlist, gameId, isAuthenticated]);
 
   useEffect(() => {
-    // Only run check once auth status is known (not 'loading')
     if (authStatus === 'loading') return;
     check();
   }, [check, authStatus]);

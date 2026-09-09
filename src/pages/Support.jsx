@@ -6,10 +6,6 @@ import { api } from '../services/api';
 import { Reveal } from '../components/ui/Reveal';
 import './Support.css';
 import { ArrowLeft } from "@phosphor-icons/react";
-
-// ============================================================
-//   STATUS MONITOR (mesmo usado na página /status)
-// ============================================================
 const API_BASE = import.meta.env.VITE_API_URL || 'https://apideadsmile.vercel.app/api';
 
 const CORE_ENDPOINTS = [
@@ -54,10 +50,6 @@ function useApiStatus() {
 
   return status;
 }
-
-// ============================================================
-//   FAQ
-// ============================================================
 const faqs = [
   {
     question: 'How do I update my game?',
@@ -80,10 +72,6 @@ const faqs = [
     answer: 'Refunds are handled on a case-by-case basis. Contact our support team via the form below or email us at deadsmilegames@gmail.com within 14 days of purchase.',
   },
 ];
-
-// ============================================================
-//   COMPONENTE PRINCIPAL
-// ============================================================
 export function Support() {
   const { t } = useLanguage();
   const { allUp, lastChecked, loading } = useApiStatus();
@@ -137,7 +125,6 @@ export function Support() {
       </Reveal>
 
       <section className="support-page__grid">
-        {/* FAQ Column */}
         <Reveal>
           <div className="support-card support-card--faq">
             <div className="support-card__icon">
@@ -175,8 +162,6 @@ export function Support() {
             </div>
           </div>
         </Reveal>
-
-        {/* Contact Form Column */}
         <Reveal delay={100}>
           <div className="support-card support-card--accent">
             <div className="support-card__icon">
@@ -247,10 +232,6 @@ export function Support() {
           </div>
         </Reveal>
       </section>
-
-      {/* ============================================================
-          SEÇÃO DE STATUS DINÂMICO (sync com a API)
-          ============================================================ */}
       <section className="support-page__extra">
         <Reveal>
           <div className="support-extra">

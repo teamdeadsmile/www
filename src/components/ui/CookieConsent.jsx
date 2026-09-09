@@ -25,14 +25,12 @@ export function CookieConsent() {
     localStorage.setItem(STORAGE_KEY, 'accepted');
     setAccepted(true);
     setVisible(false);
-    // You can trigger any analytics or consent-dependent scripts here
   };
 
   const handleDecline = () => {
     localStorage.setItem(STORAGE_KEY, 'declined');
     setAccepted(false);
     setVisible(false);
-    // Disable any non-essential tracking
   };
 
   if (!visible) return null;

@@ -43,6 +43,7 @@ export function Header({ onOpenSearch }) {
     const links = [
         ["/studio", t("nav.studio")],
         ["/games", t("nav.games")],
+        ["/downloads", t("nav.downloads")],
         ["/news", t("nav.news")],
         ["/videos", t("nav.videos")],
         ["/support", t("nav.support")],

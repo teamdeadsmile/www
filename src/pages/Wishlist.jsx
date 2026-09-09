@@ -21,7 +21,6 @@ export function Wishlist() {
     api.get('/wishlist')
       .then((data) => {
         if (!cancelled) {
-          // Mapeia cover_image para coverImage
           const mapped = (Array.isArray(data) ? data : []).map(game => ({
             ...game,
             coverImage: game.cover_image || game.coverImage || game.heroImage,

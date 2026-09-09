@@ -83,7 +83,7 @@
   margin: auto 0;
   gap: 4px;
   padding: 12px 0;
-  flex: 1; /* Ocupa o espaço disponível */
+  flex: 1;
 }
 .mobile-menu__link {
   display: flex;

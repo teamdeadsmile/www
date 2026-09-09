@@ -188,14 +188,11 @@ export function AdminComposer() {
       });
     } catch (err) {
       setError(err?.message || 'Unable to load content.');
-      // ✅ CORRIGIDO: chave 'videos' (plural)
       setItems({ news: [], videos: [], games: [] });
     } finally {
       setLoadingItems(false);
     }
   }
-
-  // ✅ MAPEAMENTO CORRETO de kind → endpoint
   const deleteEndpointMap = {
     news: 'newsletter',
     videos: 'video',

@@ -137,8 +137,6 @@
     transform: translateX(-50%) translateY(0) scale(1);
   }
 }
-
-/* Responsividade */
 @media (max-width: 768px) {
   .cookie-consent {
     bottom: 16px;
