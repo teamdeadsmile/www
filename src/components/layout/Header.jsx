@@ -66,14 +66,14 @@ export function Header({ onOpenSearch }) {
                         className="site-header__brand"
                         aria-label="Deadsmile Games"
                     >
-                        {/* <img
-                            src="/assets/branding/deadsmile-mark-mask.svg"
+                         <img
+                            src="/assets/branding/deadsmile-mark.svg"
                             alt=""
                             className="site-header__mark"
-                        /> */}
+                        />
 
                         {/* animal lembra de tirar isso quando estiver pronto */}
-                        <span
+                        {/* <span
                             style={{
                                 fontWeight: 900,
                                 border: "2px solid #b1b1b1",
@@ -83,7 +83,7 @@ export function Header({ onOpenSearch }) {
                             }}
                             >
                             BETA
-                        </span>
+                        </span> */}
                     </Link>
                     <nav className="site-header__nav" aria-label="Primary">
                         {links.map(([to, label]) => (
@@ -130,7 +130,7 @@ export function Header({ onOpenSearch }) {
                                             onClick={() => setAccountOpen(false)}
                                         >
                                             <Gear weight="bold" />
-                                            Configuration
+                                            Settings
                                         </Link>
                                         <Link
                                             to={`/profile/${encodeURIComponent(user.username)}`}

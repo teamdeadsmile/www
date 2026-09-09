@@ -3,7 +3,6 @@
   right: 26px;
   bottom: 26px;
   z-index: 130;
-
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -12,51 +11,22 @@
 
 .admin-composer__toggle {
   position: relative;
-
-  width: 46px;
-  height: 46px;
-
+  width: 60px;
+  height: 60px;
   display: grid;
   place-items: center;
-
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
-
+  border-radius: 100%;
   background: #111;
   color: #fff;
-
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
   cursor: pointer;
-
   transition:
     background 180ms ease,
     border-color 180ms ease,
     transform 180ms ease;
-}
-
-.admin-composer__toggle::after {
-  content: '';
-
-  position: absolute;
-  right: 6px;
-  top: 6px;
-
-  width: 5px;
-  height: 5px;
-
-  border-radius: 50%;
-
-  background: #fff;
-  opacity: 0.8;
-}
-
-.admin-composer__toggle:hover {
-  background: #191919;
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
 }
 
 .admin-composer__toggle svg {
@@ -78,12 +48,9 @@
 }
 .admin-composer__menu {
   width: 238px;
-
   padding: 8px;
-
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  border-radius: 13px;
-
+  border: 2px solid rgba(255, 255, 255, 0.13);
+  border-radius: 24px;
   background: #101010;
   color: #fff;
 
@@ -108,65 +75,42 @@
 }
 .admin-composer__label {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 8px;
-
+  width: 100%;
   height: 34px;
-
-  padding: 0 10px;
-
+  padding: 20px;
+  text-align: center;
   border-bottom: 1px solid #242424;
-
   color: #686868;
-
-  font-size: 9px;
+  font-size: 0.80rem;
   font-weight: 800;
-
-  letter-spacing: 0.18em;
-}
-
-.admin-dot {
-  width: 5px;
-  height: 5px;
-
-  border-radius: 50%;
-
-  background: #fff;
-
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .admin-composer__menu > button {
   width: 100%;
   height: 42px;
-
   display: flex;
   align-items: center;
   gap: 11px;
-
   margin-top: 2px;
-
-  padding: 0 10px;
-
+  padding: 0 20px;
   border: 0;
-  border-radius: 8px;
-
+  border-radius: 9999px;
   background: transparent;
   color: #a5a5a5;
-
   font: inherit;
-  font-size: 11px;
+  font-size: 0.80rem;
   font-weight: 700;
-
   text-align: left;
-
   cursor: pointer;
-
   transition:
     color 160ms ease,
     background 160ms ease,
     padding 160ms ease;
 }
+
 
 .admin-composer__menu > button:hover {
   background: #f4f4f0;
@@ -188,11 +132,7 @@
 }
 
 .admin-composer__manage {
-  margin-top: 7px !important;
-  padding-top: 9px !important;
-
-  border-top: 1px solid #242424 !important;
-  border-radius: 0 0 8px 8px !important;
+  border: 2px solid #242424 !important;
 }
 
 .admin-modal,

@@ -1,1 +1,74 @@
-.profile-page{padding-top:calc(var(--header-height) + 110px);padding-bottom:150px}.profile-page__hero{display:grid;grid-template-columns:180px 1fr;gap:45px;align-items:end;padding:30px 0 60px;border-bottom:1px solid rgba(255,255,255,.09)}.profile-page__avatar{width:180px;height:180px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#151515;border:1px solid rgba(255,255,255,.1);font-family:var(--font-display);font-size:5rem}.profile-page__avatar img{width:100%;height:100%;object-fit:cover}.profile-page__hero span{color:#666;font-size:.65rem;font-weight:800;letter-spacing:.13em}.profile-page__hero h1{font-size:clamp(4rem,10vw,9rem);margin:12px 0 20px}.profile-page__hero p{color:#999;max-width:620px;line-height:1.7}.profile-page__meta{display:flex;gap:25px;flex-wrap:wrap;padding-top:24px;color:#666;font-size:.72rem}.profile-page__meta a{color:#fff}@media(max-width:700px){.profile-page{padding-top:calc(var(--header-height-mobile) + 80px)}.profile-page__hero{grid-template-columns:1fr;gap:25px}.profile-page__avatar{width:110px;height:110px;font-size:3rem}}
+.profile-page {
+  padding-top: calc(var(--header-height) + 110px);
+  padding-bottom: 150px;
+}
+.profile-page__avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #151515;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: var(--font-display);
+  font-size: 5rem;
+}
+.profile-page__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-page__hero span {
+  color: #666;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+.profile-page__hero {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 45px;
+  align-items: end;
+  padding: 30px 0 60px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.profile-page__hero h1 {
+  font-size: 4rem;
+  margin: 12px 0 20px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.profile-page__hero p {
+  color: #999;
+  max-width: 620px;
+  line-height: 1.7;
+}
+.profile-page__meta {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+  flex-direction: column;
+  padding-top: 24px;
+  color: #666;
+  font-size: 0.72rem;
+}
+.profile-page__meta a {
+  color: #fff;
+  min-Height: 70px;
+}
+@media (max-width: 700px) {
+  .profile-page {
+    padding-top: calc(var(--header-height-mobile) + 80px);
+  }
+  .profile-page__hero {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .profile-page__avatar {
+    width: 110px;
+    height: 110px;
+    font-size: 3rem;
+  }
+}

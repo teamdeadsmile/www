@@ -22,19 +22,23 @@ export function Search() {
                 <ArrowLeft weight="bold" />
                 <span>Back</span>
             </Link>
+            
             <h1>{t("nav.search")}</h1>
-            <label htmlFor="search-page-input" className="sr-only">
-                Search games
-            </label>
-            <input
-                id="search-page-input"
-                type="search"
-                className="search-page__input"
-                placeholder="Search DEADSMILE…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                autoFocus
-            />
+            
+            <div className="search-page__input-wrapper">
+                <label htmlFor="search-page-input" className="sr-only">
+                    Search games
+                </label>
+                <input
+                    id="search-page-input"
+                    type="search"
+                    className="search-page__input"
+                    placeholder="Search DEADSMILE…"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    autoFocus
+                />
+            </div>
 
             <div className="search-page__results">
                 {status === "idle" && (

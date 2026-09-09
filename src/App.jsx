@@ -36,7 +36,7 @@ export default function App() {
     <Route path="/videos" element={<Videos />} />
     <Route path="/videos/:id" element={<Videos />} />
     <Route path="/downloads" element={<Downloads />} />
-    <Route path="/store" element={<Store />} />
+    {/* <Route path="/store" element={<Store />} /> */}
     <Route path="/support" element={<Support />} />
     <Route path="/studio" element={<Studio />} />
     <Route path="/search" element={<Search />} />

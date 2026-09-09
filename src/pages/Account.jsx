@@ -1,15 +1,40 @@
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
 import { Button } from "../components/ui/Button";
 import { Reveal } from "../components/ui/Reveal";
-import { ArrowLeft } from "@phosphor-icons/react";
+import {
+    ArrowLeft,
+    User,
+    GearSix,
+    ShieldCheck,
+    Wrench,
+    Heart,
+    PencilSimple,
+    ArrowCounterClockwise,
+    ArrowClockwise,
+    CheckCircle,
+    WarningCircle,
+    X,
+} from "@phosphor-icons/react";
 import "./Account.css";
+
+const TABS = [
+    { id: "profile", label: "Profile", icon: User },
+    { id: "account", label: "Account", icon: GearSix },
+    { id: "security", label: "Security", icon: ShieldCheck },
+    { id: "progress", label: "In progress", icon: Wrench },
+];
+
+const CROP_VIEWPORT = 260;
+const OUTPUT_SIZE = 420;
 
 export function Account() {
     const { user, logout, refresh } = useAuth();
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState("profile");
+
     const [form, setForm] = useState({
         username: user?.username || "",
         email: user?.email || "",
@@ -19,40 +44,68 @@ export function Account() {
         avatarUrl: user?.avatarUrl || null,
     });
     const [password, setPassword] = useState("");
-    const [profileStatus, setProfileStatus] = useState("");
     const [profileError, setProfileError] = useState("");
-    const [settingsStatus, setSettingsStatus] = useState("");
     const [settingsError, setSettingsError] = useState("");
     const [deleteError, setDeleteError] = useState("");
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
-
-    useEffect(
-        () =>
-            setForm((f) => ({
-                ...f,
-                username: user?.username || "",
-                email: user?.email || "",
-                bio: user?.bio || "",
-                websiteUrl: user?.websiteUrl || "",
-                location: user?.location || "",
-                avatarUrl: user?.avatarUrl || null,
-            })),
-        [user],
-    );
+    const [avatarDraft, setAvatarDraft] = useState(null);
+    const [rotation, setRotation] = useState(0);
+    const [zoom, setZoom] = useState(1);
+    const [pan, setPan] = useState({ x: 0, y: 0 });
+    const dragState = useRef(null);
+    const [saveModal, setSaveModal] = useState({
+        open: false,
+        status: "saving",
+        title: "",
+        message: "",
+    });
 
     if (!user) return null;
 
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-    async function avatar(e) {
+    async function withSaveModal(title, setFlag, fn) {
+        setFlag(true);
+        setSaveModal({ open: true, status: "saving", title, message: "" });
+        try {
+            await fn();
+            setSaveModal({
+                open: true,
+                status: "success",
+                title,
+                message: "Changes saved.",
+            });
+            setTimeout(
+                () => setSaveModal((m) => ({ ...m, open: false })),
+                1300,
+            );
+        } catch (err) {
+            setSaveModal({
+                open: true,
+                status: "error",
+                title,
+                message: err.message || "Something went wrong.",
+            });
+        } finally {
+            setFlag(false);
+        }
+    }
+
+    function closeSaveModal() {
+        setSaveModal((m) => ({ ...m, open: false }));
+    }
+    async function onAvatarSelect(e) {
         const file = e.target.files?.[0];
+        e.target.value = "";
         if (!file) return;
-        if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type) || file.size > 5_000_000) {
-            setProfileError('Use PNG, JPG or WEBP up to 5 MB.');
+        if (
+            !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
+            file.size > 5_000_000
+        ) {
+            setProfileError("Use PNG, JPG or WEBP up to 5 MB.");
             return;
         }
-
         try {
             const dataUrl = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -66,38 +119,83 @@ export function Account() {
                 image.onerror = reject;
                 image.src = dataUrl;
             });
-            const MAX_SIZE = 400;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > MAX_SIZE || height > MAX_SIZE) {
-                const ratio = Math.min(MAX_SIZE / width, MAX_SIZE / height);
-                width = Math.round(width * ratio);
-                height = Math.round(height * ratio);
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-            setForm((f) => ({ ...f, avatarUrl: compressedDataUrl }));
-            setProfileError('');
+            setRotation(0);
+            setZoom(1);
+            setPan({ x: 0, y: 0 });
+            setAvatarDraft({
+                src: dataUrl,
+                width: img.naturalWidth,
+                height: img.naturalHeight,
+            });
+            setProfileError("");
         } catch (err) {
-            setProfileError('Failed to process image.');
+            setProfileError("Failed to process image.");
             console.error(err);
         }
     }
 
+    function coverScaleFor(draft) {
+        return Math.max(
+            CROP_VIEWPORT / draft.width,
+            CROP_VIEWPORT / draft.height,
+        );
+    }
+
+    function onDragStart(e) {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        dragState.current = {
+            startX: e.clientX - pan.x,
+            startY: e.clientY - pan.y,
+        };
+    }
+    function onDragMove(e) {
+        if (!dragState.current) return;
+        setPan({
+            x: e.clientX - dragState.current.startX,
+            y: e.clientY - dragState.current.startY,
+        });
+    }
+    function onDragEnd() {
+        dragState.current = null;
+    }
+
+    function cancelCrop() {
+        setAvatarDraft(null);
+    }
+
+    function applyCrop() {
+        if (!avatarDraft) return;
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = OUTPUT_SIZE;
+            canvas.height = OUTPUT_SIZE;
+            const ctx = canvas.getContext("2d");
+            const k = OUTPUT_SIZE / CROP_VIEWPORT;
+            const displayScale = coverScaleFor(avatarDraft) * zoom;
+            ctx.save();
+            ctx.translate(
+                OUTPUT_SIZE / 2 + pan.x * k,
+                OUTPUT_SIZE / 2 + pan.y * k,
+            );
+            ctx.rotate((rotation * Math.PI) / 180);
+            ctx.scale(displayScale * k, displayScale * k);
+            ctx.drawImage(
+                img,
+                -avatarDraft.width / 2,
+                -avatarDraft.height / 2,
+            );
+            ctx.restore();
+            const finalUrl = canvas.toDataURL("image/jpeg", 0.88);
+            setForm((f) => ({ ...f, avatarUrl: finalUrl }));
+            setAvatarDraft(null);
+        };
+        img.src = avatarDraft.src;
+    }
     async function saveProfile(e) {
         e.preventDefault();
-        setSaving(true);
         setProfileError("");
-        setProfileStatus("");
-        try {
+        await withSaveModal("Saving profile", setSaving, async () => {
             await api.patch("/account", {
                 username: form.username,
                 bio: form.bio,
@@ -107,20 +205,13 @@ export function Account() {
                 email: form.email,
             });
             await refresh();
-            setProfileStatus("Profile saved.");
-        } catch (err) {
-            setProfileError(err.message);
-        } finally {
-            setSaving(false);
-        }
+        });
     }
 
     async function saveSettings(e) {
         e.preventDefault();
-        setSaving(true);
         setSettingsError("");
-        setSettingsStatus("");
-        try {
+        await withSaveModal("Saving settings", setSaving, async () => {
             await api.patch("/account", {
                 username: form.username,
                 email: form.email,
@@ -130,27 +221,17 @@ export function Account() {
                 avatarUrl: form.avatarUrl,
             });
             await refresh();
-            setSettingsStatus("Settings saved.");
-        } catch (err) {
-            setSettingsError(err.message);
-        } finally {
-            setSaving(false);
-        }
+        });
     }
 
     async function del(e) {
         e.preventDefault();
-        setDeleting(true);
         setDeleteError("");
-        try {
+        await withSaveModal("Deleting account", setDeleting, async () => {
             await api.delete("/account", { password });
             await logout();
             navigate("/", { replace: true });
-        } catch (err) {
-            setDeleteError(err.message);
-        } finally {
-            setDeleting(false);
-        }
+        });
     }
 
     async function signOut() {
@@ -164,196 +245,447 @@ export function Account() {
                 <ArrowLeft weight="bold" />
                 <span>Back</span>
             </Link>
-            <Reveal>
-                <div className="account-page__hero">
-                    <div>
-                        <h1>ACCOUNT SETTINGS</h1>
-                    </div>
-                </div>
-            </Reveal>
+
             <div className="account-page__layout">
                 <aside>
-                    <a className="is-active" href="#profile">
-                        Profile
-                    </a>
-                    <a href="#settings">Settings</a>
-                    <a href="#danger">Security</a>
-                    <Link to="/wishlist" className="account-page__wishlist">
-                        Wishlist
+                    {TABS.map((tab) => {
+                        const Icon = tab.icon;
+                        return (
+                            <button
+                                key={tab.id}
+                                type="button"
+                                className={
+                                    "account-nav-item" +
+                                    (activeTab === tab.id
+                                        ? " is-active"
+                                        : "")
+                                }
+                                onClick={() => setActiveTab(tab.id)}
+                            >
+                                <Icon weight="bold" />
+                                <span>{tab.label}</span>
+                            </button>
+                        );
+                    })}
+                    <span className="account-nav-title">Related</span>
+                    <Link
+                        to="/wishlist"
+                        className="account-nav-item account-page__wishlist"
+                    >
+                        <Heart weight="bold" />
+                        <span>Wishlist</span>
                     </Link>
                 </aside>
+
                 <div className="account-page__content">
                     <Reveal>
-                        <section id="profile" className="account-panel">
-                            <div className="account-panel__head">
-                                <h2>Public profile</h2>
+                        <div className="account-page__hero">
+                            <div className="account-page__avatar">
+                                <div className="account-page__avatar-inner">
+                                    {form.avatarUrl ? (
+                                        <img src={form.avatarUrl} alt="" />
+                                    ) : (
+                                        user.username.slice(0, 1).toUpperCase()
+                                    )}
+                                </div>
+                                <label className="avatar-upload-dot">
+                                    <PencilSimple size={24} weight="bold" />
+                                    <input
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp"
+                                        onChange={onAvatarSelect}
+                                    />
+                                </label>
                             </div>
-                            <form
-                                className="account-profile-form"
-                                onSubmit={saveProfile}
-                            >
-                                <div className="account-avatar-edit">
-                                    <div className="account-page__avatar account-page__avatar--large">
-                                        {form.avatarUrl ? (
-                                            <img src={form.avatarUrl} alt="" />
-                                        ) : (
-                                            user.username
-                                                .slice(0, 1)
-                                                .toUpperCase()
-                                        )}
-                                    </div>
-                                    <label className="avatar-upload">
-                                        Change photo
+                            <div>
+                                <h1>{user.username}</h1>
+                                {user.createdAt && (
+                                    <span>
+                                        Created on{" "}
+                                        {new Date(
+                                            user.createdAt,
+                                        ).toLocaleDateString(undefined, {
+                                            month: "short",
+                                            day: "2-digit",
+                                            year: "numeric",
+                                        })}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </Reveal>
+
+                    {activeTab === "profile" && (
+                        <Reveal key="profile">
+                            <section className="account-block">
+                                <div className="account-block__head">
+                                    <h2>Profile Details</h2>
+                                    <p>
+                                        Manage how your public profile
+                                        appears across the site.
+                                    </p>
+                                </div>
+                                <form
+                                    className="account-panel"
+                                    onSubmit={saveProfile}
+                                >
+                                    <div className="account-row">
+                                        <label htmlFor="acc-username">
+                                            Username
+                                        </label>
                                         <input
-                                            type="file"
-                                            accept="image/png,image/jpeg,image/webp"
-                                            onChange={avatar}
+                                            id="acc-username"
+                                            value={form.username.toLowerCase()}
+                                            onChange={set("username")}
+                                            placeholder="@username"
+                                            minLength={3}
+                                            maxLength={24}
                                         />
-                                    </label>
+                                    </div>
+                                    <div className="account-row">
+                                        <label htmlFor="acc-bio">Bio</label>
+                                        <textarea
+                                            id="acc-bio"
+                                            value={form.bio}
+                                            onChange={set("bio")}
+                                            placeholder="Write something about yourself."
+                                            maxLength={500}
+                                            rows="3"
+                                        />
+                                    </div>
+                                    <div className="account-row">
+                                        <label htmlFor="acc-website">
+                                            Website
+                                        </label>
+                                        <input
+                                            id="acc-website"
+                                            value={form.websiteUrl}
+                                            onChange={set("websiteUrl")}
+                                            placeholder="https://…"
+                                        />
+                                    </div>
+                                    <div className="account-row account-row--last">
+                                        <label htmlFor="acc-location">
+                                            Location
+                                        </label>
+                                        <input
+                                            id="acc-location"
+                                            value={form.location}
+                                            onChange={set("location")}
+                                            placeholder="City, Country"
+                                        />
+                                    </div>
+                                    <div className="account-block__foot">
+                                        {profileError && (
+                                            <p
+                                                className="account-page__error"
+                                                role="alert"
+                                                aria-live="polite"
+                                            >
+                                                {profileError}
+                                            </p>
+                                        )}
+                                        <Button
+                                            type="submit"
+                                            variant="secondary"
+                                            disabled={saving}
+                                        >
+                                            Save profile
+                                        </Button>
+                                    </div>
+                                </form>
+                            </section>
+                        </Reveal>
+                    )}
+
+                    {activeTab === "account" && (
+                        <Reveal key="account">
+                            <section className="account-block">
+                                <div className="account-block__head">
+                                    <h2>Account</h2>
+                                    <p>
+                                        Manage your login email and active
+                                        session.
+                                    </p>
                                 </div>
-                                <label>
-                                    Username
-                                    <input
-                                        value={form.username.toLowerCase()}
-                                        onChange={set("username")}
-                                        Placeholder="@username"
-                                        minLength={3}
-                                        maxLength={24}
-                                    />
-                                </label>
-                                <label>
-                                    Bio
-                                    <textarea
-                                        value={form.bio}
-                                        onChange={set("bio")}
-                                        placeholder="Write something about yourself."
-                                        maxLength={500}
-                                        rows="4"
-                                    />
-                                </label>
-                                <label>
-                                    Website
-                                    <input
-                                        value={form.websiteUrl}
-                                        onChange={set("websiteUrl")}
-                                        placeholder="https://…"
-                                    />
-                                </label>
-                                <label>
-                                    Location
-                                    <input
-                                        value={form.location}
-                                        onChange={set("location")}
-                                        placeholder="City, Country"
-                                    />
-                                </label>
-                                {profileError && (
-                                    <p className="account-page__error" role="alert" aria-live="polite">
-                                        {profileError}
-                                    </p>
-                                )}
-                                {profileStatus && (
-                                    <p className="account-page__success" aria-live="polite">
-                                        {profileStatus}
-                                    </p>
-                                )}
-                                <Button
-                                    type="submit"
-                                    variant="secondary"
-                                    disabled={saving}
+                                <form
+                                    className="account-panel"
+                                    onSubmit={saveSettings}
                                 >
-                                    {saving ? "Saving…" : "Save profile"}
-                                </Button>
-                            </form>
-                        </section>
-                    </Reveal>
-                    <Reveal delay={80}>
-                        <section id="settings" className="account-panel">
-                            <div className="account-panel__head">
-                                <h2>Settings</h2>
-                            </div>
-                            <form
-                                className="account-profile-form"
-                                onSubmit={saveSettings}
-                            >
-                                <label>
-                                    Email
-                                    <input
-                                        type="email"
-                                        value={form.email.toLowerCase()}
-                                        onChange={set("email")}
-                                    />
-                                </label>
-                                {settingsError && (
-                                    <p className="account-page__error" role="alert" aria-live="polite">
-                                        {settingsError}
-                                    </p>
-                                )}
-                                {settingsStatus && (
-                                    <p className="account-page__success" aria-live="polite">
-                                        {settingsStatus}
-                                    </p>
-                                )}
-                                <Button
-                                    type="submit"
-                                    variant="secondary"
-                                    disabled={saving}
-                                >
-                                    {saving ? "Saving…" : "Save settings"}
-                                </Button>
-                            </form>
-                            <div className="account-setting">
-                                <div>
-                                    <strong>Session</strong>
-                                    <p>Sign out from this device.</p>
+                                    <div className="account-row account-row--last">
+                                        <label htmlFor="acc-email">
+                                            Email
+                                        </label>
+                                        <input
+                                            id="acc-email"
+                                            type="email"
+                                            value={form.email.toLowerCase()}
+                                            onChange={set("email")}
+                                        />
+                                    </div>
+                                    <div className="account-block__foot">
+                                        {settingsError && (
+                                            <p
+                                                className="account-page__error"
+                                                role="alert"
+                                                aria-live="polite"
+                                            >
+                                                {settingsError}
+                                            </p>
+                                        )}
+                                        <Button
+                                            type="submit"
+                                            variant="secondary"
+                                            disabled={saving}
+                                        >
+                                            Save settings
+                                        </Button>
+                                    </div>
+                                </form>
+
+                                <div className="account-panel">
+                                    <div className="account-row account-row--last account-row--inline">
+                                        <div>
+                                            <strong>Session</strong>
+                                            <p>Sign out from this device.</p>
+                                        </div>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={signOut}
+                                        >
+                                            Log out
+                                        </Button>
+                                    </div>
                                 </div>
-                                <Button variant="secondary" onClick={signOut}>
-                                    Log out
-                                </Button>
-                            </div>
-                        </section>
-                    </Reveal>
-                    <Reveal delay={140}>
-                        <section
-                            id="danger"
-                            className="account-panel account-panel--danger"
-                        >
-                            <div className="account-panel__head">
-                                <h2>Delete account</h2>
-                            </div>
-                            <p>
-                                This permanently removes your account and public
-                                profile.
-                            </p>
-                            <form onSubmit={del}>
-                                <label>
-                                    Current password
-                                    <input
-                                        type="password"
-                                        required
-                                        value={password}
-                                        onChange={(e) =>
-                                            setPassword(e.target.value)
-                                        }
-                                    />
-                                </label>
-                                {deleteError && (
-                                    <p className="account-page__error" role="alert" aria-live="polite">
-                                        {deleteError}
+
+                                <div className="account-block__head account-block__head--danger">
+                                    <h2>Delete account</h2>
+                                    <p>
+                                        This is permanent. You will lose
+                                        access to your public profile and
+                                        cannot undo this action.
                                     </p>
-                                )}
-                                <Button
-                                    type="submit"
-                                    variant="danger"
-                                    disabled={deleting}
+                                </div>
+                                <form
+                                    className="account-panel account-panel--danger"
+                                    onSubmit={del}
                                 >
-                                    {deleting ? "Deleting…" : "Delete account"}
-                                </Button>
-                            </form>
-                        </section>
-                    </Reveal>
+                                    <div className="account-row account-row--last">
+                                        <label htmlFor="acc-password">
+                                            Current password
+                                        </label>
+                                        <input
+                                            id="acc-password"
+                                            type="password"
+                                            required
+                                            value={password}
+                                            onChange={(e) =>
+                                                setPassword(e.target.value)
+                                            }
+                                        />
+                                    </div>
+                                    <div className="account-block__foot">
+                                        {deleteError && (
+                                            <p
+                                                className="account-page__error"
+                                                role="alert"
+                                                aria-live="polite"
+                                            >
+                                                {deleteError}
+                                            </p>
+                                        )}
+                                        <Button
+                                            type="submit"
+                                            variant="danger"
+                                            disabled={deleting}
+                                        >
+                                            Delete account
+                                        </Button>
+                                    </div>
+                                </form>
+                            </section>
+                        </Reveal>
+                    )}
+
+                    {activeTab === "security" && (
+                        <Reveal key="security">
+                            <section className="account-block">
+                                <div className="account-block__head">
+                                    <h2>Security</h2>
+                                    <p>
+                                        Keep your account protected.
+                                    </p>
+                                </div>
+                                <div className="account-panel account-panel--placeholder">
+                                    <ShieldCheck weight="light" />
+                                    <p>
+                                        We're working on two-factor authentication, connected devices and login history. This section will be available in a future update.
+                                    </p>
+                                </div>
+                            </section>
+                        </Reveal>
+                    )}
+
+                    {activeTab === "progress" && (
+                        <Reveal key="progress">
+                            <section className="account-block">
+                                <div className="account-block__head">
+                                    <h2>In progress</h2>
+                                    <p>
+                                        Something new is on the way.
+                                    </p>
+                                </div>
+                                <div className="account-panel account-panel--placeholder">
+                                    <Wrench weight="light" />
+                                    <p>
+                                        This part of the account page is
+                                        currently being built. Check back
+                                        soon.
+                                    </p>
+                                </div>
+                            </section>
+                        </Reveal>
+                    )}
                 </div>
             </div>
+
+            {avatarDraft && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div className="modal-card crop-modal">
+                        <div className="modal-card__head">
+                            <h3>Adjust photo</h3>
+                            <button
+                                type="button"
+                                className="modal-close"
+                                onClick={cancelCrop}
+                                aria-label="Close"
+                            >
+                                <X weight="bold" />
+                            </button>
+                        </div>
+                        <div
+                            className="crop-viewport"
+                            onPointerDown={onDragStart}
+                            onPointerMove={onDragMove}
+                            onPointerUp={onDragEnd}
+                            onPointerLeave={onDragEnd}
+                        >
+                            <img
+                                src={avatarDraft.src}
+                                alt=""
+                                draggable={false}
+                                style={{
+                                    width:
+                                        avatarDraft.width *
+                                        coverScaleFor(avatarDraft) *
+                                        zoom,
+                                    height:
+                                        avatarDraft.height *
+                                        coverScaleFor(avatarDraft) *
+                                        zoom,
+                                    marginLeft:
+                                        (-(
+                                            avatarDraft.width *
+                                            coverScaleFor(avatarDraft) *
+                                            zoom
+                                        ) /
+                                            2),
+                                    marginTop:
+                                        (-(
+                                            avatarDraft.height *
+                                            coverScaleFor(avatarDraft) *
+                                            zoom
+                                        ) /
+                                            2),
+                                    transform: `translate(${pan.x}px, ${pan.y}px) rotate(${rotation}deg)`,
+                                }}
+                            />
+                        </div>
+                        <div className="crop-controls">
+                            <button
+                                type="button"
+                                className="crop-icon-btn"
+                                onClick={() =>
+                                    setRotation((r) => r - 90)
+                                }
+                                aria-label="Rotate left"
+                            >
+                                <ArrowCounterClockwise weight="bold" />
+                            </button>
+                            <input
+                                type="range"
+                                min="1"
+                                max="3"
+                                step="0.05"
+                                value={zoom}
+                                onChange={(e) =>
+                                    setZoom(parseFloat(e.target.value))
+                                }
+                                aria-label="Zoom"
+                            />
+                            <button
+                                type="button"
+                                className="crop-icon-btn"
+                                onClick={() =>
+                                    setRotation((r) => r + 90)
+                                }
+                                aria-label="Rotate right"
+                            >
+                                <ArrowClockwise weight="bold" />
+                            </button>
+                        </div>
+                        <div className="modal-card__foot">
+                            <Button variant="secondary" onClick={cancelCrop}>
+                                Cancel
+                            </Button>
+                            <Button variant="secondary" onClick={applyCrop}>
+                                Apply
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {saveModal.open && (
+                <div className="modal-overlay" role="dialog" aria-modal="true">
+                    <div
+                        className={
+                            "modal-card save-modal save-modal--" +
+                            saveModal.status
+                        }
+                    >
+                        {saveModal.status !== "saving" && (
+                            <button
+                                type="button"
+                                className="modal-close"
+                                onClick={closeSaveModal}
+                                aria-label="Close"
+                            >
+                                <X weight="bold" />
+                            </button>
+                        )}
+                        <div className="save-modal__icon">
+                            {saveModal.status === "success" && (
+                                <CheckCircle weight="fill" />
+                            )}
+                            {saveModal.status === "error" && (
+                                <WarningCircle weight="fill" />
+                            )}
+                        </div>
+                        <h3>{saveModal.title}</h3>
+                        {saveModal.status === "saving" && (
+                            <div className="save-progress">
+                                <div className="save-progress__bar" />
+                            </div>
+                        )}
+                        {saveModal.message && (
+                            <p className="save-modal__message">
+                                {saveModal.message}
+                            </p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

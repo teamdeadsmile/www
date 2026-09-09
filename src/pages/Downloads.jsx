@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Download, File, Image, Archive, HardDrives } from "@phosphor-icons/react";
+import { Download, File, Image, Archive, HardDrives } from "@phosphor-icons/react";
 import { useLanguage } from "../context/LanguageContext";
 import { useContent } from "../hooks/useContent";
 import { Reveal } from "../components/ui/Reveal";
 import { ArrowLeft } from "@phosphor-icons/react";
 import "./Downloads.css";
+
 const CATEGORY_ICONS = {
   'PRESS KIT': Archive,
   'WALLPAPERS': Image,
@@ -13,22 +14,13 @@ const CATEGORY_ICONS = {
   'SOUNDTRACK': File,
 };
 
-const CATEGORY_COLORS = {
-  'PRESS KIT': '#e8c547',
-  'WALLPAPERS': '#6fc3df',
-  'LAUNCHER': '#7bcfa6',
-  'PATCH': '#f7a072',
-  'SOUNDTRACK': '#b39ddb',
-};
-
 export function Downloads() {
   const { t } = useLanguage();
   const data = useContent("/downloads");
-  const itemsWithMeta = data.data.map((item) => {
+  const itemsWithMeta = (data.data || []).map((item) => {
     const category = item.category?.toUpperCase() || '';
     const Icon = CATEGORY_ICONS[category] || File;
-    const color = CATEGORY_COLORS[category] || '#888';
-    return { ...item, Icon, color };
+    return { ...item, Icon };
   });
 
   return (
@@ -42,89 +34,86 @@ export function Downloads() {
         <div className="downloads-header">
           <h1>Downloads</h1>
           <p className="downloads-page__intro">
-            Official files, launchers, patches, and media from DEADSMILE.
+            Official files, launchers, patches, and media.
             Everything you need in one place.
           </p>
         </div>
       </Reveal>
 
-      <div className="downloads-grid">
-        {data.status === "loading" && (
-          <div className="downloads-loading">
-            <div className="spinner" />
-            <p>Loading files…</p>
-          </div>
-        )}
+      {data.status === "loading" && (
+        <div className="downloads-loading">
+          <div className="spinner" />
+          <p>Loading files…</p>
+        </div>
+      )}
 
-        {data.status === "error" && (
-          <div className="downloads-error">
-            <p>{data.error}</p>
-          </div>
-        )}
+      {data.status === "error" && (
+        <div className="downloads-error">
+          <p>{data.error}</p>
+        </div>
+      )}
 
-        {data.status === "success" &&
-          itemsWithMeta.map((item, index) => {
-            const Icon = item.Icon;
-            const color = item.color;
-
-            return (
-              <Reveal key={item.id} delay={index * 80}>
-                <div className="download-card">
-                  <div className="download-card__icon" style={{ backgroundColor: `${color}20` }}>
-                    <Icon weight="bold" size={28} color={color} />
+      {data.status === "success" && (
+        <Reveal delay={60}>
+          <div className="download-list">
+            {itemsWithMeta.map((item) => {
+              const Icon = item.Icon;
+              return (
+                <div className="download-row" key={item.id}>
+                  <div className="download-row__icon">
+                    <Icon weight="bold" size={22} />
                   </div>
 
-                  <div className="download-card__content">
-                    <span className="download-card__category" style={{ color }}>
-                      {item.category || 'FILE'}
+                  <div className="download-row__info">
+                    <span className="download-row__category">
+                      {item.category || "FILE"}
                     </span>
-                    <h2 className="download-card__title">{item.title}</h2>
-
-                    <div className="download-card__meta">
+                    <h2 className="download-row__title">{item.title}</h2>
+                    <div className="download-row__meta">
                       {item.file_type && (
-                        <span className="download-card__tag">
-                          <File size={14} weight="bold" />
+                        <span className="download-row__tag">
                           {item.file_type}
                         </span>
                       )}
                       {item.resolution && (
-                        <span className="download-card__tag">
-                          <Image size={14} weight="bold" />
+                        <span className="download-row__tag">
                           {item.resolution}
                         </span>
                       )}
                       {item.file_size && (
-                        <span className="download-card__tag">
-                          <HardDrives size={14} weight="bold" />
+                        <span className="download-row__tag">
                           {item.file_size}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="download-card__action">
+                  <div className="download-row__action">
                     {item.file_url ? (
                       <a
-                        className="btn btn--primary"
+                        className="download-row__btn"
                         href={item.file_url}
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <Download weight="bold" size={18} />
+                        <Download weight="bold" size={15} />
                         <span>Download</span>
-                        <ArrowUpRight weight="bold" size={16} />
                       </a>
                     ) : (
-                      <button className="btn btn--secondary" disabled>
-                        Coming soon
+                      <button
+                        className="download-row__btn download-row__btn--disabled"
+                        disabled
+                      >
+                        Soon
                       </button>
                     )}
                   </div>
                 </div>
-              </Reveal>
-            );
-          })}
-      </div>
+              );
+            })}
+          </div>
+        </Reveal>
+      )}
     </div>
   );
 }

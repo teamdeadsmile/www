@@ -1,53 +1,54 @@
+.downloads-page,
+.downloads-page * {
+  box-sizing: border-box;
+}
+
 .downloads-page {
   padding-top: calc(var(--header-height) + 90px);
   padding-bottom: 140px;
 }
 
 .downloads-header {
-  margin-bottom: 60px;
+  margin-bottom: 48px;
 }
 
 .downloads-page h1 {
-  font-size: clamp(4rem, 10vw, 10rem);
-  line-height: 0.82;
-  margin-bottom: 16px;
-  letter-spacing: -0.05em;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1;
+  margin-bottom: 14px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
 
 .downloads-page__intro {
-  color: #999;
-  max-width: 650px;
-  line-height: 1.7;
-  font-size: 1.05rem;
-  margin-top: 8px;
+  color: #888;
+  max-width: 580px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-top: 0;
 }
-
-.downloads-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-
 .downloads-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 60px 0;
+  padding: 70px 0;
   color: #666;
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #222;
+  width: 36px;
+  height: 36px;
+  border: 3px solid #1c1c1c;
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .downloads-error {
@@ -58,168 +59,126 @@
   border-radius: 20px;
   background: rgba(239, 154, 154, 0.05);
 }
-
-.download-card {
-  display: grid;
-  grid-template-columns: 72px 1fr auto;
-  gap: 24px;
-  align-items: center;
-  padding: 24px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 24px;
-  background: #111;
-  transition: border-color 0.3s ease, transform 0.3s ease;
+.download-list {
+  background: #101010;
+  border-radius: 22px;
+  overflow: hidden;
 }
 
-.download-card:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  transform: translateY(-2px);
-}
-
-.download-card__icon {
-  width: 72px;
-  height: 72px;
-  border-radius: 20px;
+.download-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.04);
+  gap: 20px;
+  padding: 22px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  min-width: 0;
+}
+.download-row:last-child {
+  border-bottom: none;
 }
 
-.download-card__content {
+.download-row__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: #1a1a1a;
+  color: #ccc;
+}
+
+.download-row__info {
+  flex: 1;
   min-width: 0;
 }
 
-.download-card__category {
-  font-size: 0.6rem;
+.download-row__category {
+  display: block;
+  font-size: 0.64rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: #888;
+  letter-spacing: 0.14em;
+  color: #777;
+  margin-bottom: 5px;
 }
 
-.download-card__title {
-  font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  margin: 4px 0 10px;
-  line-height: 1.1;
+.download-row__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.download-card__meta {
+.download-row__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
-.download-card__tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 4px 10px;
+.download-row__tag {
+  padding: 3px 10px;
   border-radius: 100px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: #888;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.download-card__tag svg {
-  opacity: 0.6;
-}
-
-.download-card__action {
+.download-row__action {
   flex-shrink: 0;
 }
 
-.download-card__action .btn {
-  min-height: 44px;
-  padding: 0 22px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  border-radius: 100px;
+.download-row__btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #1d1d1d;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
   white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
 }
-
-.download-card__action .btn--primary {
-  background: #f4f4f0;
-  color: #0b0b0b;
-  border: 1px solid #f4f4f0;
+.download-row__btn:hover {
+  background: #2a2a2a;
 }
-
-.download-card__action .btn--primary:hover {
-  background: #fff;
-  border-color: #fff;
-  transform: translateY(-2px);
+.download-row__btn:active {
+  transform: scale(0.97);
 }
-
-.download-card__action .btn--secondary {
+.download-row__btn--disabled {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #777;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #666;
   cursor: not-allowed;
-  opacity: 0.6;
 }
-@media (max-width: 820px) {
+@media (max-width: 640px) {
   .downloads-page {
-    padding-top: calc(var(--header-height-mobile) + 55px);
-    padding-bottom: 100px;
+    padding-top: calc(var(--header-height-mobile) + 40px);
+    padding-bottom: 80px;
   }
-
-  .download-card {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 22px 20px;
-    text-align: center;
+  .download-row {
+    flex-wrap: wrap;
+    padding: 20px;
   }
-
-  .download-card__icon {
-    margin: 0 auto;
+  .download-row__icon {
+    width: 40px;
+    height: 40px;
   }
-
-  .download-card__meta {
-    justify-content: center;
+  .download-row__action {
+    width: 100%;
+    padding-left: 66px;
   }
-
-  .download-card__action .btn {
+  .download-row__btn {
     width: 100%;
     justify-content: center;
-  }
-
-  .downloads-page h1 {
-    font-size: clamp(3.2rem, 14vw, 6rem);
-  }
-}
-
-@media (max-width: 480px) {
-  .download-card {
-    padding: 18px 14px;
-    border-radius: 18px;
-  }
-
-  .download-card__icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-  }
-
-  .download-card__icon svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .download-card__title {
-    font-size: 1.2rem;
-  }
-
-  .download-card__tag {
-    font-size: 0.6rem;
-    padding: 3px 8px;
   }
 }

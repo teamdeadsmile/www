@@ -236,15 +236,7 @@ export function Support() {
         <Reveal>
           <div className="support-extra">
             <div className="support-extra__item">
-              <div className="status-icon-wrapper">
-                {loading ? (
-                  <span className="status-spinner">…</span>
-                ) : allUp ? (
-                  <CheckCircle weight="fill" size={24} className="status-icon up" />
-                ) : (
-                  <XCircle weight="fill" size={24} className="status-icon down" />
-                )}
-              </div>
+                <Link to="/status" className="support-extra__item">
               <div>
                 <h3>Live Status</h3>
                 <p>
@@ -261,6 +253,7 @@ export function Support() {
                   )}
                 </p>
               </div>
+              </Link>
             </div>
 
             <div className="support-extra__item">

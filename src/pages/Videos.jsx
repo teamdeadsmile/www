@@ -30,6 +30,7 @@ export function Videos() {
     const data = useContent("/videos", { limit: 24 });
     const detail = useContent(id ? `/videos/${id}` : null, {});
     const isAdmin = user?.role === "admin";
+
     async function remove(videoId, fromDetail = false) {
         if (!window.confirm("Delete this video permanently?")) return;
         try {
@@ -46,6 +47,7 @@ export function Videos() {
             window.alert(err.message || "Unable to delete video.");
         }
     }
+
     if (id) {
         if (detail.status === "loading")
             return (
@@ -107,6 +109,11 @@ export function Videos() {
             </div>
         );
     }
+
+    const videosList = data.status === "success" ? data.data : [];
+    const featuredVideo = videosList.length > 0 ? videosList[0] : null;
+    const remainingVideos = videosList.length > 0 ? videosList.slice(1) : [];
+
     return (
         <div className="media-page container">
             <Link to="/" className="back-link">
@@ -120,34 +127,65 @@ export function Videos() {
                     <p className="media-page__intro">{t("media.videoIntro")}</p>
                 </div>
             </Reveal>
+
+            {data.status === "loading" && <p>Loading…</p>}
+            {data.status === "error" && <p>{data.error}</p>}
+
+            {data.status === "success" && featuredVideo && (
+                <Reveal>
+                    <div className="media-featured-wrapper">
+                        <div className="media-featured">
+                            <Link to={`/videos/${featuredVideo.id}`} className="media-featured__visual">
+                                {featuredVideo.thumbnail && (
+                                    <img src={featuredVideo.thumbnail} alt="" loading="lazy" />
+                                )}
+                                <span>
+                                    <Play weight="fill" size={26} />
+                                </span>
+                            </Link>
+                            <div className="media-featured__meta">
+                                <div>
+                                    <small>{featuredVideo.category || "Destaque"}</small>
+                                    <h2>{featuredVideo.title}</h2>
+                                </div>
+                                <div className="media-tile__actions" style={{ marginTop: "20px" }}>
+                                    <Link to={`/videos/${featuredVideo.id}`}>
+                                        {t("media.play")} <ArrowUpRight weight="bold" />
+                                    </Link>
+                                    {isAdmin && (
+                                        <button
+                                            type="button"
+                                            className="media-featured__delete"
+                                            onClick={() => remove(featuredVideo.id)}
+                                            aria-label={`Delete ${featuredVideo.title}`}
+                                        >
+                                            <Trash weight="bold" />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Reveal>
+            )}
+
             <div className="media-page__grid">
-                {data.status === "loading" && <p>Loading…</p>}
-                {data.status === "error" && <p>{data.error}</p>}
-                {data.data.map((v, i) => (
+                {remainingVideos.map((v, i) => (
                     <Reveal key={v.id} delay={i * 60}>
                         <article className="media-tile">
-                            <Link
-                                to={`/videos/${v.id}`}
-                                className="media-tile__visual"
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                }}
-                            >
+                            <Link to={`/videos/${v.id}`} className="media-tile__visual">
                                 {v.thumbnail && (
-                                    <img
-                                        src={v.thumbnail}
-                                        alt=""
-                                        loading="lazy"
-                                    />
+                                    <img src={v.thumbnail} alt="" loading="lazy" />
                                 )}
                                 <span>
                                     <Play weight="fill" size={20} />
                                 </span>
                             </Link>
                             <div className="media-tile__meta">
-                                <small>{v.category}</small>
-                                <h2>{v.title}</h2>
+                                <div>
+                                    <small>{v.category}</small>
+                                    <h2>{v.title}</h2>
+                                </div>
                                 <div className="media-tile__actions">
                                     <Link to={`/videos/${v.id}`}>
                                         {t("media.play")}{" "}

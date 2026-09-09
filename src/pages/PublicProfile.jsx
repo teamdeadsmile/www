@@ -65,11 +65,12 @@ export function PublicProfile() {
                                   }
                     )}
                 </span>
-                {profile.location && <span>{profile.location}</span>}
+                {profile.location && <span>Based in {profile.location}</span>}
                 {profile.websiteUrl && (
                     <a
                         href={profile.websiteUrl}
                         target="_blank"
+                        className="btn btn--secondary"
                         rel="noreferrer"
                     >
                         Website <ArrowUpRight weight="bold" />

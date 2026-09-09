@@ -238,7 +238,7 @@ export function AdminComposer() {
       <div className={`admin-composer ${menuOpen ? 'is-open' : ''}`}>
         {menuOpen && (
           <div className="admin-composer__menu" role="menu">
-            <div className="admin-composer__label">Configuration</div>
+            <div className="admin-composer__label">Manage content</div>
             <button type="button" role="menuitem" onClick={() => open('newsletter')}>
               <Newspaper weight="bold" />
               <span>Newsletter</span>
@@ -270,7 +270,7 @@ export function AdminComposer() {
           aria-label={menuOpen ? 'Close admin menu' : 'Open admin menu'}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? <X weight="bold" /> : <Gear weight="bold" />}
+          {menuOpen ? <X weight="bold" /> : <Gear weight="bold" size={24} />}
         </button>
       </div>
 
