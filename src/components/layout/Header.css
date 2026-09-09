@@ -47,6 +47,7 @@
 .site-header__link {
   padding: 10px 14px;
   border-radius: 999px;
+  font-weight: 800;
   color: #a6a6a6;
   font-size: 0.78rem;
   font-weight: 600;
