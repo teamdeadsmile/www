@@ -66,10 +66,25 @@
 }
 .site-header__search,
 .site-header__account-pill,
-.site-header__signin,
 .site-header__menu-toggle {
   height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+.site-header__signin{ 
+  height: 42px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   background: transparent;
   color: #fff;
   border-radius: 999px;
@@ -93,9 +108,13 @@
   justify-content: flex-start;
   font-size: 0.73rem;
 }
-.site-header__search:hover,
 .site-header__account-pill:hover,
 .site-header__signin:hover,
+.site-header__search:hover{ 
+  background: #fff;
+  color: #0a0a0a;
+  border-color: #fff;
+}
 .site-header__menu-toggle:hover {
   background: #fff;
   color: #0a0a0a;

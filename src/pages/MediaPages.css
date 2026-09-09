@@ -27,7 +27,6 @@
   aspect-ratio: 16/9;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle at 50% 45%, #353026, #101010);
   transition: transform 0.6s ease;
 }
 .media-tile:hover .media-tile__visual {

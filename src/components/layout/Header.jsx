@@ -107,7 +107,7 @@ export function Header({ onOpenSearch }) {
                                     onClick={() => setAccountOpen((v) => !v)}
                                     aria-expanded={accountOpen}
                                 >
-                                    <span>{user?.username}</span>
+                                    <UserCircle size={24} weight="bold" />
                                     <CaretDown weight="bold" size={13} />
                                 </button>
                                 {accountOpen && (
@@ -158,7 +158,7 @@ export function Header({ onOpenSearch }) {
                             </div>
                         ) : (
                             <Link to="/login" className="site-header__signin">
-                                {t("nav.signIn")}
+                                <UserCircle size={24} weight="bold" />
                             </Link>
                         )}
 

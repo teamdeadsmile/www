@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useLanguage } from '../../context/LanguageContext';
-import { ArrowUpRight, MagnifyingGlass, X, Heart, File, LockKey } from '@phosphor-icons/react';
+import { ArrowUpRight, MagnifyingGlass, X, Heart, File, LockKey, UserCircle } from '@phosphor-icons/react';
 import './MobileMenu.css';
 
 export function MobileMenu({ open, onClose, onOpenSearch }) {
@@ -77,11 +77,11 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
                 <div className="mobile-menu__footer">
                     {status === 'authenticated' ? (
                         <Link to="/account" className="mobile-menu__account" onClick={onClose}>
-                            {user?.username}
+                            <UserCircle size={32} weight="bold" />
                         </Link>
                     ) : (
                         <Link to="/login" className="mobile-menu__account" onClick={onClose}>
-                            {t('nav.signIn')}
+                            <UserCircle size={32} weight="bold" />
                         </Link>
                     )}
                 </div>

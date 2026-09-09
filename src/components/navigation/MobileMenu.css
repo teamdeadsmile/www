@@ -137,11 +137,13 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 .mobile-menu__account {
-  padding: 10px 16px;
   border-radius: 999px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #fff;
   color: #080808;
-  font-size: 0.7rem;
   font-weight: 700;
   white-space: nowrap;
 }
