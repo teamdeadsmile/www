@@ -63,7 +63,16 @@ export function News() {
                             <time>
                                 {new Date(
                                     item.published_at,
-                                ).toLocaleDateString()}
+                                ).toLocaleDateString(
+                                    'en-US',
+                                  {
+                                    day: '2-digit',
+                                    month:
+                                      'short',
+                                    year: 'numeric',
+                                    timeZone: 'UTC',
+                                  }
+                                )}
                             </time>
                         </div>
                         <h1>{item.title}</h1>
@@ -119,7 +128,16 @@ export function News() {
                                 <span>
                                     {new Date(
                                         story.published_at,
-                                    ).toLocaleDateString()}
+                                    ).toLocaleDateString(
+                                        'en-US',
+                                        {
+                                            day: '2-digit',
+                                            month:
+                                            'short',
+                                            year: 'numeric',
+                                            timeZone: 'UTC',
+                                        }
+                                    )}
                                 </span>
                                 <small>{story.category}</small>
                             </div>

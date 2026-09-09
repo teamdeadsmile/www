@@ -55,7 +55,16 @@ export function PublicProfile() {
             <section className="profile-page__meta">
                 <span>
                     Member since{" "}
-                    {new Date(profile.createdAt).toLocaleDateString()}
+                    {new Date(profile.createdAt).toLocaleDateString(
+                        'en-US',
+                                  {
+                                    day: '2-digit',
+                                    month:
+                                      'short',
+                                    year: 'numeric',
+                                    timeZone: 'UTC',
+                                  }
+                    )}
                 </span>
                 {profile.location && <span>{profile.location}</span>}
                 {profile.websiteUrl && (

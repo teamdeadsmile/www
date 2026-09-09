@@ -302,12 +302,13 @@ export function Home() {
                                 item.published_at
                               )
                                 .toLocaleDateString(
-                                  'en-GB',
+                                  'en-US',
                                   {
                                     day: '2-digit',
                                     month:
                                       'short',
                                     year: 'numeric',
+                                    timeZone: 'UTC',
                                   }
                                 )
                                 .toUpperCase()

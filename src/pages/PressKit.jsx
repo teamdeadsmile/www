@@ -135,7 +135,7 @@ export function PressKit() {
                   <ul className="press-kit__game-meta">
                     <li><strong>Genre:</strong> {game.genres?.join(', ') || '—'}</li>
                     <li><strong>Platforms:</strong> {game.platforms?.join(', ') || '—'}</li>
-                    <li><strong>Release:</strong> {game.releaseDate ? new Date(game.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long' }) : 'To be announced'}</li>
+                    <li><strong>Release:</strong> {game.releaseDate ? new Date(game.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', timeZone: 'UTC' }) : 'To be announced'}</li>
                     <li><strong>Status:</strong> {game.status?.replace('_', ' ') || '—'}</li>
                   </ul>
                   <p>{game.shortDescription || game.description || 'No description available.'}</p>
