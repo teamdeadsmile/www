@@ -42,9 +42,6 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
                 ref={panelRef}
             >
                 <div className="mobile-menu__top">
-                    <Link to="/" className="mobile-menu__brand" onClick={onClose}>
-                        <img src="/assets/branding/deadsmile-mark.svg" alt="Deadsmile Games" style={{ height: 28 }} />
-                    </Link>
                     <button
                         type="button"
                         className="mobile-menu__close"
