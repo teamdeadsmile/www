@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { api } from "../services/api";
@@ -64,6 +64,32 @@ export function Account() {
     const [twoFactor, setTwoFactor] = useState({ qrCode: null, secret: null, enabled: false });
     const [totpToken, setTotpToken] = useState('');
     const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function loadTwoFactorStatus() {
+            try {
+                const data = await api.get('/account/totp/status');
+                if (!cancelled) {
+                    setTwoFactor((current) => ({
+                        ...current,
+                        enabled: Boolean(data?.enabled),
+                        qrCode: data?.enabled ? null : current.qrCode,
+                        secret: data?.enabled ? null : current.secret,
+                    }));
+                }
+            } catch (err) {
+                if (!cancelled) console.error('Unable to load 2FA status:', err);
+            }
+        }
+
+        loadTwoFactorStatus();
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     if (!user) return null;
 

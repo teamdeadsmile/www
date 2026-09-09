@@ -1,67 +1,74 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { api } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { ArrowLeft, ShieldCheck } from '@phosphor-icons/react';
 import { useLanguage } from '../context/LanguageContext';
 import './AuthPages.css';
 
 export function Login() {
-  const { login, refresh } = useAuth();
+  const { login, verifyTwoFactor } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
-  const from = location.state?.from?.pathname || '/account';
-
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
-  const [tempUserId, setTempUserId] = useState(null);
   const [twoFactorCode, setTwoFactorCode] = useState('');
   const [twoFactorSubmitting, setTwoFactorSubmitting] = useState(false);
 
-async function handleSubmit(e) {
-  e.preventDefault();
-  setError(null);
-  setSubmitting(true);
-  try {
-    const response = await login(form.email, form.password);
-    console.log('Login response FULL:', response); // ← log completo
-    if (response?.requiresTwoFactor) {
-      console.log('2FA required, userId:', response.userId); // ← log específico
-      setTwoFactorRequired(true);
-      setTempUserId(response.userId);
-      setSubmitting(false);
-    } else {
-      navigate(from, { replace: true });
-    }
-  } catch (err) {
-    setError(err.message);
-    setSubmitting(false);
-  } finally {
-    setSubmitting(false);
-  }
-}
+  const from = location.state?.from?.pathname || '/account';
 
-async function verifyTwoFactor(e) {
-  e.preventDefault();
-  setTwoFactorSubmitting(true);
-  setError(null);
-  const payload = { userId: tempUserId, token: twoFactorCode };
-  console.log('verify payload:', payload); // ← log do payload
-  try {
-    await api.post('/auth/verify-2fa', payload);
-    await refresh();
-    navigate(from, { replace: true });
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setTwoFactorSubmitting(false);
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+
+    try {
+      const response = await login(form.email, form.password);
+
+      if (response?.requiresTwoFactor) {
+        setTwoFactorRequired(true);
+        setTwoFactorCode('');
+        return;
+      }
+
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   }
-}
+
+  async function handleTwoFactorSubmit(e) {
+    e.preventDefault();
+    setError(null);
+
+    const token = twoFactorCode.replace(/\D/g, '').slice(0, 6);
+    if (token.length !== 6) {
+      setError('Enter the 6-digit code from your authenticator app.');
+      return;
+    }
+
+    setTwoFactorSubmitting(true);
+
+    try {
+      await verifyTwoFactor(token);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setTwoFactorSubmitting(false);
+    }
+  }
+
+  function cancelTwoFactor() {
+    setTwoFactorRequired(false);
+    setTwoFactorCode('');
+    setError(null);
+  }
 
   return (
     <div className="auth-page">
@@ -73,7 +80,7 @@ async function verifyTwoFactor(e) {
 
         <h1>{twoFactorRequired ? 'Two-Factor Authentication' : t('auth.login')}</h1>
 
-        {error && <p className="auth-page__error" role="alert">{error}</p>}
+        {error && <p className="auth-page__error" role="alert" aria-live="polite">{error}</p>}
 
         {!twoFactorRequired ? (
           <form onSubmit={handleSubmit} noValidate>
@@ -104,7 +111,7 @@ async function verifyTwoFactor(e) {
             </Button>
           </form>
         ) : (
-          <form onSubmit={verifyTwoFactor} noValidate>
+          <form onSubmit={handleTwoFactorSubmit} noValidate>
             <div className="auth-page__field">
               <label htmlFor="twoFactorCode">Authenticator Code</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -114,9 +121,10 @@ async function verifyTwoFactor(e) {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
+                  autoComplete="one-time-code"
                   maxLength={6}
                   value={twoFactorCode}
-                  onChange={(e) => setTwoFactorCode(e.target.value)}
+                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="6-digit code"
                   required
                   autoFocus
@@ -128,6 +136,14 @@ async function verifyTwoFactor(e) {
             </div>
             <Button type="submit" className="auth-page__submit" disabled={twoFactorSubmitting}>
               {twoFactorSubmitting ? 'Verifying…' : 'Verify & Sign In'}
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={cancelTwoFactor}
+              disabled={twoFactorSubmitting}
+            >
+              Back to sign in
             </Button>
           </form>
         )}

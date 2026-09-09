@@ -7,7 +7,7 @@ export function ProtectedRoute({ children }) {
 
   if (status === 'loading') return null;
 
-  if (status === 'guest') {
+  if (status !== 'authenticated') {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

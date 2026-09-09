@@ -12,9 +12,11 @@ export function AuthProvider({ children }) {
       const me = await api.get('/auth/me');
       setUser(me);
       setStatus('authenticated');
+      return me;
     } catch {
       setUser(null);
       setStatus('guest');
+      return null;
     }
   }, []);
 
@@ -23,7 +25,21 @@ export function AuthProvider({ children }) {
   }, [refresh]);
 
   const login = useCallback(async (email, password) => {
-    const me = await api.post('/auth/login', { email, password });
+    const result = await api.post('/auth/login', { email, password });
+
+    if (result?.requiresTwoFactor) {
+      setUser(null);
+      setStatus('twoFactor');
+      return result;
+    }
+
+    setUser(result);
+    setStatus('authenticated');
+    return result;
+  }, []);
+
+  const verifyTwoFactor = useCallback(async (token) => {
+    const me = await api.post('/auth/verify-2fa', { token });
     setUser(me);
     setStatus('authenticated');
     return me;
@@ -38,15 +54,19 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await api.post('/auth/logout');
+      if (status === 'authenticated') {
+        await api.post('/auth/logout');
+      }
     } finally {
       setUser(null);
       setStatus('guest');
     }
-  }, []);
+  }, [status]);
 
   return (
-    <AuthContext.Provider value={{ user, status, login, register, logout, refresh }}>
+    <AuthContext.Provider
+      value={{ user, status, login, verifyTwoFactor, register, logout, refresh }}
+    >
       {children}
     </AuthContext.Provider>
   );
