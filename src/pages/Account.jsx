@@ -61,9 +61,54 @@ export function Account() {
         message: "",
     });
 
+    const [twoFactor, setTwoFactor] = useState({ qrCode: null, secret: null, enabled: false });
+    const [totpToken, setTotpToken] = useState('');
+    const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+
     if (!user) return null;
 
     const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+    async function setupTwoFactor() {
+        setTwoFactorLoading(true);
+        try {
+            const data = await api.get('/account/totp/setup');
+            setTwoFactor({ qrCode: data.qrCodeDataUrl, secret: data.secret, enabled: false });
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setTwoFactorLoading(false);
+        }
+    }
+
+    async function enableTwoFactor(e) {
+        e.preventDefault();
+        setTwoFactorLoading(true);
+        try {
+            await api.post('/account/totp/enable', { token: totpToken });
+            setTwoFactor(prev => ({ ...prev, enabled: true }));
+            setTotpToken('');
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setTwoFactorLoading(false);
+        }
+    }
+
+    async function disableTwoFactor(e) {
+        e.preventDefault();
+        if (!window.confirm('Disable 2FA? You will lose the extra security.')) return;
+        setTwoFactorLoading(true);
+        try {
+            await api.delete('/account/totp/disable', { token: totpToken });
+            setTwoFactor({ qrCode: null, secret: null, enabled: false });
+            setTotpToken('');
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setTwoFactorLoading(false);
+        }
+    }
 
     async function withSaveModal(title, setFlag, fn) {
         setFlag(true);
@@ -95,6 +140,7 @@ export function Account() {
     function closeSaveModal() {
         setSaveModal((m) => ({ ...m, open: false }));
     }
+
     async function onAvatarSelect(e) {
         const file = e.target.files?.[0];
         e.target.value = "";
@@ -148,6 +194,7 @@ export function Account() {
             startY: e.clientY - pan.y,
         };
     }
+
     function onDragMove(e) {
         if (!dragState.current) return;
         setPan({
@@ -155,6 +202,7 @@ export function Account() {
             y: e.clientY - dragState.current.startY,
         });
     }
+
     function onDragEnd() {
         dragState.current = null;
     }
@@ -192,6 +240,7 @@ export function Account() {
         };
         img.src = avatarDraft.src;
     }
+
     async function saveProfile(e) {
         e.preventDefault();
         setProfileError("");
@@ -511,16 +560,112 @@ export function Account() {
                         <Reveal key="security">
                             <section className="account-block">
                                 <div className="account-block__head">
-                                    <h2>Security</h2>
+                                    <h2>Two-Factor Authentication</h2>
                                     <p>
-                                        Keep your account protected.
+                                        Add an extra layer of security to your account.
                                     </p>
                                 </div>
-                                <div className="account-panel account-panel--placeholder">
-                                    <ShieldCheck weight="light" />
-                                    <p>
-                                        We're working on two-factor authentication, connected devices and login history. This section will be available in a future update.
-                                    </p>
+                                <div className="account-panel">
+                                    {twoFactor.enabled ? (
+                                        <form onSubmit={disableTwoFactor}>
+                                            <div className="account-row account-row--inline">
+                                                <div>
+                                                    <strong style={{ color: '#58a56b' }}>
+                                                        <CheckCircle weight="fill" size={16} style={{ marginRight: 8 }} />
+                                                        2FA is enabled
+                                                    </strong>
+                                                    <p>Your account is protected with an authenticator app.</p>
+                                                </div>
+                                            </div>
+                                            <div className="account-row">
+                                                <label htmlFor="totp-disable">Enter current TOTP code to disable</label>
+                                                <input
+                                                    id="totp-disable"
+                                                    type="text"
+                                                    inputMode="numeric"
+                                                    pattern="[0-9]*"
+                                                    maxLength={6}
+                                                    value={totpToken}
+                                                    onChange={(e) => setTotpToken(e.target.value)}
+                                                    placeholder="6-digit code"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="account-block__foot">
+                                                <Button
+                                                    type="submit"
+                                                    variant="danger"
+                                                    disabled={twoFactorLoading}
+                                                >
+                                                    {twoFactorLoading ? 'Disabling…' : 'Disable 2FA'}
+                                                </Button>
+                                            </div>
+                                        </form>
+                                    ) : (
+                                        <>
+                                            {twoFactor.qrCode ? (
+                                                <form onSubmit={enableTwoFactor}>
+                                                    <div className="account-row">
+                                                        <p>Scan the QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, etc.).</p>
+                                                        <img
+                                                            src={twoFactor.qrCode}
+                                                            alt="QR Code for 2FA"
+                                                            style={{ maxWidth: 200, margin: '10px 0' }}
+                                                        />
+                                                        <p>
+                                                            <small>
+                                                                Secret (backup): <strong>{twoFactor.secret}</strong>
+                                                            </small>
+                                                        </p>
+                                                    </div>
+                                                    <div className="account-row">
+                                                        <label htmlFor="totp-enable">Enter the 6-digit code from the app</label>
+                                                        <input
+                                                            id="totp-enable"
+                                                            type="text"
+                                                            inputMode="numeric"
+                                                            pattern="[0-9]*"
+                                                            maxLength={6}
+                                                            value={totpToken}
+                                                            onChange={(e) => setTotpToken(e.target.value)}
+                                                            placeholder="123456"
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="account-block__foot">
+                                                        <Button
+                                                            type="submit"
+                                                            variant="secondary"
+                                                            disabled={twoFactorLoading}
+                                                        >
+                                                            {twoFactorLoading ? 'Enabling…' : 'Enable 2FA'}
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant="ghost"
+                                                            onClick={() => setTwoFactor({ qrCode: null, secret: null, enabled: false })}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            ) : (
+                                                <div className="account-row account-row--inline">
+                                                    <div>
+                                                        <strong>Protect your account</strong>
+                                                        <p>Set up two‑factor authentication using an authenticator app.</p>
+                                                    </div>
+                                                    <Button
+                                                        variant="secondary"
+                                                        onClick={setupTwoFactor}
+                                                        disabled={twoFactorLoading}
+                                                    >
+                                                        {twoFactorLoading ? 'Loading…' : 'Set up 2FA'}
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
                                 </div>
                             </section>
                         </Reveal>
