@@ -214,7 +214,7 @@ export function Account() {
                                 <label>
                                     Username
                                     <input
-                                        value={form.username}
+                                        value={form.username.toLowerCase()}
                                         onChange={set("username")}
                                         minLength={3}
                                         maxLength={24}
@@ -277,7 +277,7 @@ export function Account() {
                                     Email
                                     <input
                                         type="email"
-                                        value={form.email}
+                                        value={form.email.toLowerCase()}
                                         onChange={set("email")}
                                     />
                                 </label>
