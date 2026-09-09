@@ -22,13 +22,13 @@ export function Footer() {
                         src="/assets/branding/deadsmile-mark.svg"
                         alt=""
                         aria-hidden="true"
-                        style={{ width: 110, height: 110, opacity: 0.3, marginBottom: 12 }}
+                        style={{ width: 110, height: 110, marginBottom: 12 }}
                     />
                     <p className="site-footer__tagline">
                         Independent studio making unforgettable games.<br />
                         Built with passion, shipped with intention.
                     </p>
-                    <Link to="/games" className="site-footer__cta">
+                    <Link to="/games" className="btn btn--primary btn--large">
                         {t("nav.games")} <ArrowRight weight="bold" size={13} />
                     </Link>
                 </div>
