@@ -5,8 +5,6 @@ import { useContent } from "../hooks/useContent";
 import { Reveal } from "../components/ui/Reveal";
 import { ArrowLeft } from "@phosphor-icons/react";
 import "./Downloads.css";
-
-// Mapeia ícones por categoria
 const CATEGORY_ICONS = {
   'PRESS KIT': Archive,
   'WALLPAPERS': Image,
@@ -26,8 +24,6 @@ const CATEGORY_COLORS = {
 export function Downloads() {
   const { t } = useLanguage();
   const data = useContent("/downloads");
-
-  // Adiciona ícone e cor baseados na categoria
   const itemsWithMeta = data.data.map((item) => {
     const category = item.category?.toUpperCase() || '';
     const Icon = CATEGORY_ICONS[category] || File;

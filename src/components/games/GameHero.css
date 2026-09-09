@@ -1,15 +1,9 @@
-/* ══════════════════════════════════════════
-   GameHero — Rockstar-style full-bleed hero
-   ══════════════════════════════════════════ */
-
 .rs-hero {
   position: relative;
   width: 100%;
   height: 100svh;
   min-height: 580px;
   overflow: hidden;
-
-  /* imagem vem via style={{ backgroundImage }} no JSX */
   background-color: #0a0a0a;
   background-size: cover;
   background-position: center top;
@@ -20,7 +14,6 @@
   justify-content: flex-end;
 }
 
-/* zoom suave via pseudo-element separado — não conflita com backgroundImage inline */
 .rs-hero::before {
   content: '';
   position: absolute;
@@ -36,8 +29,6 @@
   from { transform: scale(1.06); }
   to   { transform: scale(1); }
 }
-
-/* overlay: escurece só a base, topo livre para a arte aparecer */
 .rs-hero__overlay {
   position: absolute;
   inset: 0;
@@ -53,14 +44,12 @@
     );
 }
 
-/* conteúdo acima do overlay e do pseudo */
 .rs-hero__content {
   position: relative;
   z-index: 2;
   padding-bottom: clamp(72px, 9vw, 110px);
 }
 
-/* ── identity: logo (esquerda) + texto (direita) ── */
 .rs-hero__identity {
   display: flex;
   align-items: flex-start;
@@ -84,7 +73,6 @@
   flex-direction: column;
 }
 
-/* eyebrow — "GRAND THEFT AUTO VI" */
 .rs-hero__eyebrow {
   font-size: 0.62rem;
   font-weight: 700;
@@ -94,8 +82,6 @@
   margin: 0 0 8px 0;
   line-height: 1;
 }
-
-/* título — "Pre-Order Now" da Rockstar: sans-serif bold, sem condensado */
 .rs-hero__title {
   font-family: var(--font-body, 'Helvetica Neue', Arial, sans-serif);
   font-size: clamp(2.6rem, 5.5vw, 4.8rem);
@@ -114,9 +100,6 @@
   gap: 12px;
 }
 
-/* ══════════════════════════════════════
-   Controles — pill bottom-right
-   ══════════════════════════════════════ */
 .rs-hero__controls {
   position: absolute;
   bottom: 32px;
@@ -158,7 +141,6 @@
   transform: scale(0.9);
 }
 
-/* pips */
 .rs-hero__pips {
   display: flex;
   align-items: center;
@@ -196,8 +178,6 @@
   width: 100%;
   background: rgba(255, 255, 255, 0.45);
 }
-
-/* ── responsive ── */
 @media (max-width: 768px) {
   .rs-hero {
     background-position: 65% top;
