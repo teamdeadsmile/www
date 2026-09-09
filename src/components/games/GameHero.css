@@ -1,41 +1,43 @@
-/* ═══════════════════════════════════════════════
-   GameHero — Rockstar-accurate full-bleed hero
-   ═══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   GameHero — Rockstar-style full-bleed hero
+   ══════════════════════════════════════════ */
 
-/* ── Wrapper ── */
 .rs-hero {
   position: relative;
   width: 100%;
   height: 100svh;
   min-height: 580px;
   overflow: hidden;
-  background: #0a0a0a;
+
+  /* imagem vem via style={{ backgroundImage }} no JSX */
+  background-color: #0a0a0a;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
 
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
 }
 
-/* ── Background image — fills 100% of the section ── */
-.rs-hero__bg-img {
+/* zoom suave via pseudo-element separado — não conflita com backgroundImage inline */
+.rs-hero::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  inset: -5%;
+  background: inherit;
+  background-size: cover;
+  background-position: center top;
   z-index: 0;
-  display: block;
-
   animation: rs-zoom 9s ease-out forwards;
 }
 
 @keyframes rs-zoom {
-  from { transform: scale(1.05); }
-  to   { transform: scale(1);    }
+  from { transform: scale(1.06); }
+  to   { transform: scale(1); }
 }
 
-/* ── Overlay: only darkens bottom third so art stays clean at top ── */
+/* overlay: escurece só a base, topo livre para a arte aparecer */
 .rs-hero__overlay {
   position: absolute;
   inset: 0;
@@ -44,62 +46,56 @@
   background:
     linear-gradient(
       to top,
-      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.92) 0%,
       rgba(0, 0, 0, 0.55) 22%,
-      rgba(0, 0, 0, 0.10) 45%,
-      transparent          60%
+      rgba(0, 0, 0, 0.08) 46%,
+      transparent          62%
     );
 }
 
-/* ── Content sits above overlay ── */
+/* conteúdo acima do overlay e do pseudo */
 .rs-hero__content {
   position: relative;
   z-index: 2;
-  /* space between content bottom and carousel controls */
   padding-bottom: clamp(72px, 9vw, 110px);
 }
 
-/* ── Identity block: logo (left) + text (right) ── */
+/* ── identity: logo (esquerda) + texto (direita) ── */
 .rs-hero__identity {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: 22px;
 }
 
-/* Logo column */
 .rs-hero__logo-col {
   flex-shrink: 0;
 }
 
 .rs-hero__logo {
   display: block;
-  width: clamp(80px, 11vw, 150px);
+  width: clamp(80px, 11vw, 148px);
   height: auto;
   object-fit: contain;
-  /* keep logo crisp on any background */
-  filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.65));
 }
 
-/* Text column */
 .rs-hero__text-col {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
-/* Eyebrow — "GRAND THEFT AUTO VI" style */
+/* eyebrow — "GRAND THEFT AUTO VI" */
 .rs-hero__eyebrow {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.58);
   margin: 0 0 8px 0;
   line-height: 1;
 }
 
-/* Title — Rockstar uses a heavy sans-serif, NOT condensed display
-   "Pre-Order Now" is big, bold, white, with normal tracking          */
+/* título — "Pre-Order Now" da Rockstar: sans-serif bold, sem condensado */
 .rs-hero__title {
   font-family: var(--font-body, 'Helvetica Neue', Arial, sans-serif);
   font-size: clamp(2.6rem, 5.5vw, 4.8rem);
@@ -107,11 +103,10 @@
   line-height: 1.0;
   letter-spacing: -0.02em;
   color: #ffffff;
-  margin: 0 0 24px 0;
+  margin: 0 0 26px 0;
   max-width: 16ch;
 }
 
-/* ── CTA row ── */
 .rs-hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -119,74 +114,18 @@
   gap: 12px;
 }
 
-/* Primary button — Rockstar's amber/tan "Explore Editions" */
-.rs-hero__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 12px 26px;
-
-  font-family: var(--font-body, Arial, sans-serif);
-  font-size: 0.88rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  text-decoration: none;
-
-  /* Rockstar amber — #c8963e approx from the screenshot */
-  background: #c89640;
-  color: #1a0f00;
-
-  border: none;
-  border-radius: 4px;
-
-  transition:
-    background 0.2s ease,
-    transform  0.18s ease,
-    box-shadow 0.2s ease;
-}
-
-.rs-hero__btn:hover {
-  background: #d9a84a;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(200, 150, 64, 0.4);
-}
-
-.rs-hero__btn:active {
-  transform: translateY(0);
-}
-
-/* Ghost variant — transparent, white border */
-.rs-hero__btn--ghost {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(8px);
-}
-
-.rs-hero__btn--ghost:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.65);
-  color: #fff;
-  box-shadow: none;
-}
-
-/* ════════════════════════════════════════════════
-   Carousel controls — pill, bottom-right
-   (pause | ●●● | ‹ ›)
-   ════════════════════════════════════════════════ */
+/* ══════════════════════════════════════
+   Controles — pill bottom-right
+   ══════════════════════════════════════ */
 .rs-hero__controls {
   position: absolute;
   bottom: 32px;
   right: clamp(20px, 5vw, 60px);
   z-index: 3;
-
   display: flex;
   align-items: center;
   gap: 8px;
-
   padding: 7px 10px 7px 8px;
-
   background: rgba(0, 0, 0, 0.46);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -194,21 +133,17 @@
   border-radius: 100px;
 }
 
-/* Icon buttons (pause, prev, next) */
 .rs-hero__ctrl-btn {
   width: 32px;
   height: 32px;
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border: none;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.08);
   color: rgba(255, 255, 255, 0.8);
-
   cursor: pointer;
   transition: background 0.2s ease, transform 0.18s ease, color 0.2s ease;
 }
@@ -223,35 +158,30 @@
   transform: scale(0.9);
 }
 
-/* Pip container */
+/* pips */
 .rs-hero__pips {
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-/* Individual pip — a thin progress-bar track */
 .rs-hero__pip {
   position: relative;
   height: 3px;
   width: 28px;
-
   padding: 0;
   border: none;
   border-radius: 3px;
   overflow: hidden;
-
   background: rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: width 0.3s ease;
 }
 
-/* Active pip is wider, Rockstar style */
 .rs-hero__pip--active {
   width: 56px;
 }
 
-/* Fill bar inside active pip — width driven by JS progress state */
 .rs-hero__pip-fill {
   position: absolute;
   inset-block: 0;
@@ -260,22 +190,21 @@
   border-radius: 3px;
   background: #ffffff;
   pointer-events: none;
-  transition: width 0.05s linear;
 }
 
-/* Non-active pips show a static half-fill to indicate "visited" */
 .rs-hero__pip:not(.rs-hero__pip--active) .rs-hero__pip-fill {
   width: 100%;
   background: rgba(255, 255, 255, 0.45);
-  transition: none;
 }
 
-/* ════════
-   Responsive
-   ════════ */
+/* ── responsive ── */
 @media (max-width: 768px) {
-  .rs-hero__bg-img {
-    object-position: 65% center;
+  .rs-hero {
+    background-position: 65% top;
+  }
+
+  .rs-hero::before {
+    background-position: 65% top;
   }
 
   .rs-hero__content {
@@ -298,34 +227,12 @@
 }
 
 @media (max-width: 480px) {
-  .rs-hero__identity {
-    gap: 16px;
-  }
-
-  .rs-hero__btn {
-    padding: 11px 20px;
-    font-size: 0.8rem;
-  }
-
-  .rs-hero__controls {
-    gap: 6px;
-    padding: 5px 8px;
-  }
-
-  .rs-hero__ctrl-btn {
-    width: 28px;
-    height: 28px;
-  }
-
-  .rs-hero__pip {
-    width: 22px;
-  }
-
-  .rs-hero__pip--active {
-    width: 42px;
-  }
+  .rs-hero__identity { gap: 14px; }
+  .rs-hero__ctrl-btn { width: 28px; height: 28px; }
+  .rs-hero__pip { width: 22px; }
+  .rs-hero__pip--active { width: 42px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rs-hero__bg-img { animation: none; }
+  .rs-hero::before { animation: none; }
 }

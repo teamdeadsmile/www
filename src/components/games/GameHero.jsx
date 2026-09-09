@@ -32,33 +32,19 @@ export function GameHero({
 
   if (!game) return null;
 
-  /* ── mesma lógica de campos do GameHero original ── */
-  const backgroundSrc =
-    game.background ||
-    game.background_image ||
-    game.hero_image ||
-    game.cover_image ||
-    game.cover ||
-    game.banner ||
-    game.image ||
-    '';
-
-  const logoSrc = game.logo || game.logo_image || '';
-  const title   = game.title || game.name || '';
-  const eyebrow = game.tagline || game.subtitle || game.genre || game.category || '';
+  const backgroundSrc = game.heroImage || game.coverImage || '';
+  const logoSrc       = game.logo || '';
+  const title         = game.title || '';
+  const eyebrow       = game.genres?.[0] || game.shortDescription || '';
 
   return (
     <section
       className="rs-hero"
       aria-label={`Featured: ${title}`}
-      /* background via style — garante que a URL funcione independente
-         de como o navegador lida com position:absolute em imagens */
       style={backgroundSrc ? { backgroundImage: `url(${backgroundSrc})` } : undefined}
     >
-      {/* overlay escurece só a base, mantém a arte visível no topo */}
       <div className="rs-hero__overlay" />
 
-      {/* ── conteúdo: logo + eyebrow + título + botão ── */}
       <div className="rs-hero__content container">
         <div className="rs-hero__identity">
 
@@ -80,9 +66,9 @@ export function GameHero({
             <h1 className="rs-hero__title">{title}</h1>
 
             <div className="rs-hero__actions">
-              {game.trailer_url && (
+              {game.trailerUrl && (
                 <a
-                  href={game.trailer_url}
+                  href={game.trailerUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn--primary"
@@ -106,7 +92,6 @@ export function GameHero({
         </div>
       </div>
 
-      {/* ── controles carousel ── */}
       {carouselCount > 1 && (
         <div className="rs-hero__controls">
 
