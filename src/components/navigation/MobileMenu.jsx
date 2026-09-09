@@ -66,28 +66,6 @@ export function MobileMenu({ open, onClose, onOpenSearch }) {
                         </Link>
                     ))}
 
-                    <button
-                        type="button"
-                        className="mobile-menu__link mobile-menu__link--button"
-                        onClick={() => {
-                            onClose();
-                            onOpenSearch?.();
-                        }}
-                    >
-                        <span>{t('nav.search')}</span>
-                        <MagnifyingGlass weight="bold" className="mobile-menu__arrow" />
-                    </button>
-
-                    <Link to="/presskit" onClick={onClose} className="mobile-menu__link" style={{ '--menu-delay': '200ms' }}>
-                        <span>Press Kit</span>
-                        <File weight="bold" className="mobile-menu__arrow" />
-                    </Link>
-
-                    <Link to="/privacy" onClick={onClose} className="mobile-menu__link" style={{ '--menu-delay': '245ms' }}>
-                        <span>Privacy</span>
-                        <LockKey weight="bold" className="mobile-menu__arrow" />
-                    </Link>
-
                     {status === 'authenticated' && (
                         <Link to="/wishlist" onClick={onClose} className="mobile-menu__link" style={{ '--menu-delay': '290ms' }}>
                             <span>Wishlist</span>
