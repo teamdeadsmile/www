@@ -1,38 +1,170 @@
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Play } from '@phosphor-icons/react';
 import './GameHero.css';
+import { ArrowUpRight, Play } from '@phosphor-icons/react';
 
-export function GameHero({ game, isDetail = false, carouselIndex = 0, carouselCount = 0, onNext, onPrev }) {
+export function GameHero({
+  game,
+  carouselIndex,
+  carouselCount,
+  onNext,
+  onPrev,
+}) {
+  const [paused, setPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef(null);
+  const DURATION = 6500;
+
+  useEffect(() => {
+    cancelAnimationFrame(rafRef.current);
+    setProgress(0);
+    if (paused) return;
+
+    const start = performance.now();
+    const tick = (now) => {
+      const pct = Math.min(((now - start) / DURATION) * 100, 100);
+      setProgress(pct);
+      if (pct < 100) rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [carouselIndex, paused]);
+
+  if (!game) return null;
+
+  /* ── mesma lógica de campos do GameHero original ── */
+  const backgroundSrc =
+    game.background ||
+    game.background_image ||
+    game.hero_image ||
+    game.cover_image ||
+    game.cover ||
+    game.banner ||
+    game.image ||
+    '';
+
+  const logoSrc = game.logo || game.logo_image || '';
+  const title   = game.title || game.name || '';
+  const eyebrow = game.tagline || game.subtitle || game.genre || game.category || '';
+
   return (
-    <section className={`game-hero ${isDetail ? 'game-hero--detail' : ''}`}>
-      <div className="game-hero__media">
-        <img src={game.heroImage || '/assets/placeholders/game-hero.svg'} alt="" className="game-hero__image" />
-        <div className="game-hero__scrim" />
-      </div>
+    <section
+      className="rs-hero"
+      aria-label={`Featured: ${title}`}
+      /* background via style — garante que a URL funcione independente
+         de como o navegador lida com position:absolute em imagens */
+      style={backgroundSrc ? { backgroundImage: `url(${backgroundSrc})` } : undefined}
+    >
+      {/* overlay escurece só a base, mantém a arte visível no topo */}
+      <div className="rs-hero__overlay" />
 
-      <div className="game-hero__content container">
-        {game.featuredLabel && <p className="game-hero__eyebrow">{game.featuredLabel}</p>}
-        <h1 className="game-hero__title">{game.title}</h1>
-        {game.shortDescription && <p className="game-hero__desc">{game.shortDescription}</p>}
+      {/* ── conteúdo: logo + eyebrow + título + botão ── */}
+      <div className="rs-hero__content container">
+        <div className="rs-hero__identity">
 
-        {!isDetail && (
-          <div className="game-hero__actions">
-            {game.trailerUrl && (
-              <a className="btn btn--primary" href={game.trailerUrl} target="_blank" rel="noreferrer">
-                <Play weight="fill"/><span>Watch trailer</span>
-              </a>
+          {logoSrc && (
+            <div className="rs-hero__logo-col">
+              <img
+                src={logoSrc}
+                alt={`${title} logo`}
+                className="rs-hero__logo"
+              />
+            </div>
+          )}
+
+          <div className="rs-hero__text-col">
+            {eyebrow && (
+              <p className="rs-hero__eyebrow">{eyebrow}</p>
             )}
-            <Link className="btn btn--secondary" to={`/games/${game.slug}`}>
-              <span>Learn more</span><ArrowUpRight weight="bold"/>
-            </Link>
+
+            <h1 className="rs-hero__title">{title}</h1>
+
+            <div className="rs-hero__actions">
+              {game.trailer_url && (
+                <a
+                  href={game.trailer_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn--primary"
+                >
+                  <Play weight="fill" />
+                  <span>Watch Trailer</span>
+                </a>
+              )}
+              {game.slug && (
+                <Link
+                  to={`/games/${game.slug}`}
+                  className="btn btn--secondary"
+                >
+                  Explore Game
+                  <ArrowUpRight weight="bold" />
+                </Link>
+              )}
+            </div>
           </div>
-        )}
-        {!isDetail && carouselCount > 1 && <div className="game-hero__controls" aria-label="Featured games">
-          <button type="button" onClick={onPrev} aria-label="Previous featured game"><ArrowLeft weight="bold"/></button>
-          <span>{String(carouselIndex + 1).padStart(2,'0')} / {String(carouselCount).padStart(2,'0')}</span>
-          <button type="button" onClick={onNext} aria-label="Next featured game"><ArrowRight weight="bold"/></button>
-        </div>}
+
+        </div>
       </div>
+
+      {/* ── controles carousel ── */}
+      {carouselCount > 1 && (
+        <div className="rs-hero__controls">
+
+          <button
+            className="rs-hero__ctrl-btn"
+            onClick={() => setPaused((p) => !p)}
+            aria-label={paused ? 'Retomar' : 'Pausar'}
+          >
+            {paused ? (
+              <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+              </svg>
+            )}
+          </button>
+
+          <div className="rs-hero__pips" role="tablist">
+            {Array.from({ length: carouselCount }).map((_, i) => {
+              const isActive = i === carouselIndex;
+              return (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`Slide ${i + 1}`}
+                  className={`rs-hero__pip${isActive ? ' rs-hero__pip--active' : ''}`}
+                  onClick={() => {
+                    const diff = i - carouselIndex;
+                    if (diff > 0) for (let d = 0; d < diff; d++) onNext();
+                    if (diff < 0) for (let d = 0; d > diff; d--) onPrev();
+                  }}
+                >
+                  <span
+                    className="rs-hero__pip-fill"
+                    style={isActive ? { width: `${progress}%` } : {}}
+                  />
+                </button>
+              );
+            })}
+          </div>
+
+          <button className="rs-hero__ctrl-btn" onClick={onPrev} aria-label="Anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+              <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+          <button className="rs-hero__ctrl-btn" onClick={onNext} aria-label="Próximo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
+        </div>
+      )}
     </section>
   );
 }

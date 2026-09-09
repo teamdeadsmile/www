@@ -7,6 +7,7 @@ import { GameGrid } from '../components/games/GameGrid';
 import { Reveal } from '../components/ui/Reveal';
 import { api } from '../services/api';
 import { ArrowUpRight } from '@phosphor-icons/react';
+import { Download } from '@phosphor-icons/react';
 import './Home.css';
 
 export function Home() {
@@ -419,6 +420,31 @@ export function Home() {
 
         </div>
 
+      </section>
+      <section className="home__download">
+        <div className="container home__download-inner">
+          <div className="home__download-content">
+            <h2>
+              Official mobile app <br />
+              <em>for Android.</em>
+            </h2>
+            <p>
+              Get the official Deadsmile mobile app for Android.
+              Stay connected to games, news, and updates on the go.
+            </p>
+            <Link to="/downloads" className="btn btn--primary" style={{ maxWidth: '200px' }}>
+              <Download weight="bold" size={18} />
+              <span>Download App</span>
+              <ArrowUpRight weight="bold" size={16} />
+            </Link>
+          </div>
+          <div className="home__download-visual">
+            <div className="home__download-phone">
+              <div className="home__download-screen">
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
       <section className="home__media container">
 
