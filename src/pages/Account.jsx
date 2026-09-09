@@ -216,6 +216,7 @@ export function Account() {
                                     <input
                                         value={"@"+form.username.toLowerCase()}
                                         onChange={set("username")}
+                                        Placeholder="@username"
                                         minLength={3}
                                         maxLength={24}
                                     />
@@ -225,6 +226,7 @@ export function Account() {
                                     <textarea
                                         value={form.bio}
                                         onChange={set("bio")}
+                                        placeholder="Write something about yourself."
                                         maxLength={500}
                                         rows="4"
                                     />
@@ -242,6 +244,7 @@ export function Account() {
                                     <input
                                         value={form.location}
                                         onChange={set("location")}
+                                        placeholder="City, Country"
                                     />
                                 </label>
                                 {profileError && (
