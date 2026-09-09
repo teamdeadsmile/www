@@ -2,7 +2,7 @@ import './GameMeta.css';
 
 export function GameMeta({ game }) {
   const rows = [
-    { label: 'Release date', value: game.releaseDate ? new Date(game.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'To be announced' },
+    { label: 'Release date', value: game.releaseDate ? new Date(game.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : 'To be announced' },
     { label: 'Platforms', value: game.platforms?.join(', ') || '—' },
     { label: 'Genres', value: game.genres?.join(', ') || '—' },
     { label: 'Status', value: game.status?.replace('_', ' ') || '—' },
