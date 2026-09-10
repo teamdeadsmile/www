@@ -10,12 +10,15 @@ export function AuthProvider({ children }) {
   const refresh = useCallback(async () => {
     try {
       const me = await api.get('/auth/me');
+
       setUser(me);
       setStatus('authenticated');
+
       return me;
     } catch {
       setUser(null);
       setStatus('guest');
+
       return null;
     }
   }, []);
@@ -24,31 +27,61 @@ export function AuthProvider({ children }) {
     refresh();
   }, [refresh]);
 
-  const login = useCallback(async (email, password) => {
-    const result = await api.post('/auth/login', { email, password });
+  const login = useCallback(
+    async (email, password, recaptchaToken) => {
+      const result = await api.post('/auth/login', {
+        email,
+        password,
+        recaptchaToken,
+      });
 
-    if (result?.requiresTwoFactor) {
-      setUser(null);
-      setStatus('twoFactor');
+      /*
+       * The password and reCAPTCHA were valid,
+       * but this account requires TOTP verification.
+       *
+       * The user is NOT authenticated yet.
+       */
+      if (result?.requiresTwoFactor) {
+        setUser(null);
+        setStatus('twoFactor');
+
+        return result;
+      }
+
+      /*
+       * Login completed without 2FA.
+       */
+      setUser(result);
+      setStatus('authenticated');
+
       return result;
-    }
-
-    setUser(result);
-    setStatus('authenticated');
-    return result;
-  }, []);
+    },
+    []
+  );
 
   const verifyTwoFactor = useCallback(async (token) => {
-    const me = await api.post('/auth/verify-2fa', { token });
+    /*
+     * The backend gets the pending user from the
+     * temporary server-side session.
+     *
+     * No userId is sent by the frontend.
+     */
+    const me = await api.post('/auth/verify-2fa', {
+      token,
+    });
+
     setUser(me);
     setStatus('authenticated');
+
     return me;
   }, []);
 
   const register = useCallback(async (payload) => {
     const me = await api.post('/auth/register', payload);
+
     setUser(me);
     setStatus('authenticated');
+
     return me;
   }, []);
 
@@ -65,7 +98,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, status, login, verifyTwoFactor, register, logout, refresh }}
+      value={{
+        user,
+        status,
+        login,
+        verifyTwoFactor,
+        register,
+        logout,
+        refresh,
+      }}
     >
       {children}
     </AuthContext.Provider>
