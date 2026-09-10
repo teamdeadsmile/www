@@ -82,8 +82,6 @@ export function Register() {
       navigate('/account', { replace: true });
     } catch (err) {
       setError(err?.message || 'Unable to create your account.');
-
-      // reCAPTCHA tokens are single-use and should not be reused
       setRecaptchaToken(null);
       recaptchaRef.current?.reset();
     } finally {
