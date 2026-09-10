@@ -61,13 +61,6 @@ export function Login() {
                 recaptchaToken,
             );
 
-            /*
-             * The CAPTCHA is only required for the initial
-             * email/password authentication.
-             *
-             * If 2FA is enabled, the backend creates a
-             * temporary server-side 2FA session.
-             */
             if (response?.requiresTwoFactor) {
                 setTwoFactorRequired(true);
                 setTwoFactorCode("");
@@ -77,11 +70,6 @@ export function Login() {
             navigate(from, { replace: true });
         } catch (err) {
             setError(err?.message || "Unable to sign in. Please try again.");
-
-            /*
-             * A reCAPTCHA token should not be reused after
-             * an authentication attempt fails.
-             */
             setRecaptchaToken(null);
         } finally {
             setSubmitting(false);
@@ -271,6 +259,7 @@ export function Login() {
                             variant="secondary"
                             onClick={cancelTwoFactor}
                             disabled={twoFactorSubmitting}
+                            style={{ marginTop: 12 }}
                         >
                             Back to sign in
                         </Button>
