@@ -174,6 +174,7 @@ export function Register() {
                 ref={recaptchaRef}
                 sitekey={recaptchaSiteKey}
                 onChange={handleRecaptchaChange}
+                theme="dark"
                 onExpired={handleRecaptchaExpired}
                 onErrored={handleRecaptchaError}
               />

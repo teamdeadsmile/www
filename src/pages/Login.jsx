@@ -178,6 +178,7 @@ export function Login() {
                                 sitekey={
                                     import.meta.env.VITE_RECAPTCHA_SITE_KEY
                                 }
+                                theme="dark"
                                 onChange={handleRecaptchaChange}
                                 onExpired={handleRecaptchaExpired}
                                 onErrored={handleRecaptchaError}
