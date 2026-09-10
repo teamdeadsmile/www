@@ -117,9 +117,6 @@ export function Footer() {
 
                 <div className="site-footer__security">
                     <div className="site-footer__security-item">
-                    </div>
-
-                    <div className="site-footer__security-item">
                         <span className="site-footer__security-icon">
                             <ShieldCheck size={15} weight="bold" />
                         </span>
