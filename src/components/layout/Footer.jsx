@@ -123,7 +123,6 @@ export function Footer() {
                         <span className="site-footer__security-icon">
                             <ShieldCheck size={15} weight="bold" />
                         </span>
-
                         <span>
                             Protected by reCAPTCHA
                         </span>

@@ -185,7 +185,6 @@
 .site-footer__security-item {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
     white-space: nowrap;
 }
 
@@ -193,6 +192,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    margin-right: 7px;
     color: rgba(245, 241, 232, 0.5);
 }
 
