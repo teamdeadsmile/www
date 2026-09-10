@@ -1,15 +1,8 @@
-/* ═══════════════════════════════════════════════════════════════════
-   Status.css — API Status page
-   Design language: matches Account.css / variables.css
-   ═══════════════════════════════════════════════════════════════════ */
-
 .status-page {
   padding-top: calc(var(--header-height) + 90px);
   padding-bottom: 160px;
   color: var(--color-text);
 }
-
-/* ── Back link ────────────────────────────────────────────────────── */
 
 .status-page .back-link {
   display: inline-flex;
@@ -29,8 +22,6 @@
   width: 16px;
   height: 16px;
 }
-
-/* ── Header ───────────────────────────────────────────────────────── */
 
 .status-header {
   margin-bottom: 48px;
@@ -52,8 +43,6 @@
   line-height: 1.65;
   margin: 0 0 32px;
 }
-
-/* ── Overall-status banner ────────────────────────────────────────── */
 
 .status-banner {
   display: flex;
@@ -103,14 +92,17 @@
   color: var(--color-text-muted);
   background: var(--color-surface-secondary);
 }
-
-/* Subtle pulse animation for the "checking" indicator dot */
 .status-pulse {
   animation: status-pulse-anim 1.4s ease-in-out infinite;
 }
 @keyframes status-pulse-anim {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 .status-banner__body {
@@ -126,8 +118,12 @@
   font-weight: 700;
   letter-spacing: -0.01em;
 }
-.status-banner--up .status-banner__body strong { color: var(--color-success); }
-.status-banner--down .status-banner__body strong { color: var(--color-danger); }
+.status-banner--up .status-banner__body strong {
+  color: var(--color-success);
+}
+.status-banner--down .status-banner__body strong {
+  color: var(--color-danger);
+}
 
 .status-banner__body span {
   font-size: var(--fs-xs);
@@ -135,7 +131,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Refresh button */
 .status-refresh {
   display: inline-flex;
   align-items: center;
@@ -157,8 +152,8 @@
     color var(--t-fast) ease;
 }
 .status-refresh:hover:not(:disabled) {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.22);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.22);
   color: var(--color-text);
 }
 .status-refresh:disabled {
@@ -166,15 +161,14 @@
   cursor: not-allowed;
 }
 
-/* Spinning refresh icon */
 .spinning {
   animation: spin 0.9s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
-/* ── Sections list ────────────────────────────────────────────────── */
 
 .status-sections {
   display: flex;
@@ -199,7 +193,6 @@
   background: rgba(217, 74, 82, 0.04);
 }
 
-/* Section trigger row */
 .status-section__head {
   width: 100%;
   display: flex;
@@ -215,7 +208,7 @@
   transition: background var(--t-fast) ease;
 }
 .status-section__head:hover {
-  background: rgba(255,255,255,0.025);
+  background: rgba(255, 255, 255, 0.025);
 }
 
 .status-section__icon-wrap {
@@ -250,7 +243,6 @@
   white-space: nowrap;
 }
 
-/* Status dot */
 .status-dot {
   width: 8px;
   height: 8px;
@@ -258,12 +250,17 @@
   flex-shrink: 0;
   transition: background var(--t-fast) ease;
 }
-.status-dot--up       { background: var(--color-success); }
-.status-dot--down     { background: var(--color-danger); }
+.status-dot--up {
+  background: var(--color-success);
+}
+.status-dot--down {
+  background: var(--color-danger);
+}
 .status-dot--idle,
-.status-dot--checking { background: var(--color-text-muted); }
+.status-dot--checking {
+  background: var(--color-text-muted);
+}
 
-/* up / down badge */
 .status-section__badge {
   font-size: 0.68rem;
   font-weight: 700;
@@ -286,7 +283,6 @@
   color: var(--color-text-muted);
 }
 
-/* Latency chip */
 .status-section__latency {
   font-size: 0.68rem;
   font-weight: 600;
@@ -295,7 +291,6 @@
   flex-shrink: 0;
 }
 
-/* Caret */
 .status-section__caret {
   display: flex;
   color: var(--color-text-muted);
@@ -306,8 +301,6 @@
 .status-section__caret.open {
   transform: rotate(180deg);
 }
-
-/* ── Expanded route list ───────────────────────────────────────────── */
 
 .status-section__routes {
   border-top: 1px solid var(--color-border);
@@ -343,7 +336,6 @@
   border-bottom: none;
 }
 
-/* HTTP method badge */
 .status-method {
   font-family: var(--font-display);
   font-size: 0.62rem;
@@ -354,13 +346,25 @@
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
-.status-method--get    { background: rgba(88, 165, 107, 0.14);  color: #7ecb93; }
-.status-method--post   { background: rgba(100, 149, 237, 0.14); color: #82aaee; }
-.status-method--patch  { background: rgba(255, 193, 7, 0.12);   color: #e8b84b; }
-.status-method--delete { background: rgba(217, 74, 82, 0.14);   color: #e07b80; }
+.status-method--get {
+  background: rgba(88, 165, 107, 0.14);
+  color: #7ecb93;
+}
+.status-method--post {
+  background: rgba(100, 149, 237, 0.14);
+  color: #82aaee;
+}
+.status-method--patch {
+  background: rgba(255, 193, 7, 0.12);
+  color: #e8b84b;
+}
+.status-method--delete {
+  background: rgba(217, 74, 82, 0.14);
+  color: #e07b80;
+}
 
 .status-route__path {
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
   font-size: 0.78rem;
   color: var(--color-text-secondary);
   background: var(--color-surface-secondary);
@@ -380,7 +384,6 @@
   min-width: 0;
 }
 
-/* Probe footnote */
 .status-route__probe {
   margin: 12px 0 0;
   font-size: 0.7rem;
@@ -388,12 +391,10 @@
   line-height: 1.5;
 }
 .status-route__probe code {
-  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-family: "SF Mono", "Fira Code", Consolas, monospace;
   font-size: 0.69rem;
   color: var(--color-text-secondary);
 }
-
-/* ── Footer note ──────────────────────────────────────────────────── */
 
 .status-footer-note {
   margin-top: 48px;
@@ -403,14 +404,12 @@
   line-height: 1.7;
 }
 
-/* ── Responsive ───────────────────────────────────────────────────── */
-
 @media (max-width: 800px) {
   .status-page {
     padding-top: calc(var(--header-height-mobile) + 70px);
   }
   .status-section__desc {
-    display: none; /* hide on small screens, label + badge is enough */
+    display: none;
   }
 }
 

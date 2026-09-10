@@ -34,23 +34,12 @@ export function AuthProvider({ children }) {
         password,
         recaptchaToken,
       });
-
-      /*
-       * The password and reCAPTCHA were valid,
-       * but this account requires TOTP verification.
-       *
-       * The user is NOT authenticated yet.
-       */
       if (result?.requiresTwoFactor) {
         setUser(null);
         setStatus('twoFactor');
 
         return result;
       }
-
-      /*
-       * Login completed without 2FA.
-       */
       setUser(result);
       setStatus('authenticated');
 
@@ -60,12 +49,6 @@ export function AuthProvider({ children }) {
   );
 
   const verifyTwoFactor = useCallback(async (token) => {
-    /*
-     * The backend gets the pending user from the
-     * temporary server-side session.
-     *
-     * No userId is sent by the frontend.
-     */
     const me = await api.post('/auth/verify-2fa', {
       token,
     });
