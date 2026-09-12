@@ -16,6 +16,8 @@ import {
     ArrowClockwise,
     CheckCircle,
     WarningCircle,
+    LockKey,
+    CaretRight,
     X,
 } from "@phosphor-icons/react";
 import "./Account.css";
@@ -60,6 +62,7 @@ export function Account() {
         title: "",
         message: "",
     });
+    
 
     const [twoFactor, setTwoFactor] = useState({ qrCode: null, secret: null, enabled: false });
     const [totpToken, setTotpToken] = useState('');
@@ -497,6 +500,31 @@ export function Account() {
                                             value={form.email.toLowerCase()}
                                             onChange={set("email")}
                                         />
+                                        <button
+                                            type="button"
+                                            className="btn btn--primary"
+                                            style={{
+                                                width: '100%',
+                                                justifyContent: 'center',
+                                                marginTop: 12,
+                                            }}
+                                            onClick={() => navigate('/forgot-password')}
+                                            >
+                                            <LockKey size={22} weight="regular" />
+
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 8,
+                                                }}
+                                            >
+                                                <strong>Forgot password?</strong>
+                                                <span>Reset your password.</span>
+                                            </div>
+
+                                            <CaretRight size={20} />
+                                        </button>
                                     </div>
                                     <div className="account-block__foot">
                                         {settingsError && (
