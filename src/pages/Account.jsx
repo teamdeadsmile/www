@@ -510,7 +510,7 @@ export function Account() {
                                             }}
                                             onClick={() => navigate('/forgot-password')}
                                             >
-                                            <LockKey size={22} weight="regular" />
+                                            <LockKey size={22} weight="bold" />
 
                                             <div
                                                 style={{
