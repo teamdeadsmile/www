@@ -21,6 +21,8 @@ import { PressKit } from './pages/PressKit';
 import { NotFound } from './pages/NotFound';
 import { Status } from './pages/Status'
 import { PublicProfile } from './pages/PublicProfile';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
 
 export default function App() {
   return <Routes><Route element={<AppLayout />}>
@@ -45,6 +47,8 @@ export default function App() {
     <Route path="/status" element={<Status />} />
     <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
     <Route path="/profile/:username" element={<PublicProfile />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
     <Route path="*" element={<NotFound />} />
   </Route></Routes>;
 }

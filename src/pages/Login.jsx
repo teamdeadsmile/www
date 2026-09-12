@@ -274,6 +274,17 @@ export function Login() {
                     </p>
                 )}
 
+                {!twoFactorRequired && (
+                    <p style={{ textAlign: 'center', marginTop: 16, marginBottom: 0 }}>
+                        <Link
+                        to="/forgot-password"
+                        style={{ color: '#888', fontSize: '0.8rem', borderBottom: '1px solid #444' }}
+                        >
+                        Forgot password?
+                        </Link>
+                    </p>
+                    )}
+
                 <div className="auth-page__recaptcha-footer">
                     {" "}
                     <span>Protected by reCAPTCHA</span>

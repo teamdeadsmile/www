@@ -12,7 +12,9 @@ export function AppLayout() {
   const [loading, setLoading] = useState(true);
   useEffect(() => { const id = window.setTimeout(() => setLoading(false), 420); return () => window.clearTimeout(id); }, []);
   const location = useLocation();
-  const isAuthPage = ['/login', '/register'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register', '/forgot-password', '/reset-password'].includes(
+  location.pathname,
+);
   return <>
     {loading && <div className="app-loader" aria-hidden="true"></div>}
     <a href="#main-content" className="skip-link">Skip to content</a>
