@@ -37,6 +37,7 @@ const initial = {
   genres: '',
   platforms: '',
   purchaseUrl: '',
+  itchGameId: '',
   downloadUrl: '',
 };
 
@@ -149,6 +150,7 @@ export function AdminComposer() {
           trailerUrl: form.trailerUrl || null,
           featured: form.featured,
           purchaseUrl: form.purchaseUrl || null,
+          itchGameId: form.itchGameId ? Number(form.itchGameId) : null,
           downloadUrl: form.downloadUrl || null,
           genres: form.genres.split(',').map((v) => v.trim()).filter(Boolean),
           platforms: form.platforms.split(',').map((v) => v.trim()).filter(Boolean),
@@ -338,7 +340,8 @@ export function AdminComposer() {
                 <Field label="Hero image URL" value={form.heroImage} onChange={set('heroImage')} />
                 <Field label="Cover image URL" value={form.coverImage} onChange={set('coverImage')} />
                 <Field label="Trailer URL" value={form.trailerUrl} onChange={set('trailerUrl')} />
-                <Field label="Purchase URL" value={form.purchaseUrl} onChange={set('purchaseUrl')} placeholder="https://store.steampowered.com/..." />
+                <Field label="Purchase URL" value={form.purchaseUrl} onChange={set('purchaseUrl')} placeholder="https://deadsml.itch.io/game/purchase" />
+                <Field label="itch.io game ID" type="number" min="1" value={form.itchGameId} onChange={set('itchGameId')} />
                 <Field label="Download URL" value={form.downloadUrl} onChange={set('downloadUrl')} placeholder="https://..." />
                 <Field label="Genres (comma separated)" value={form.genres} onChange={set('genres')} />
                 <Field label="Platforms (comma separated)" value={form.platforms} onChange={set('platforms')} />

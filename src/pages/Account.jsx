@@ -8,6 +8,7 @@ import {
     ArrowLeft,
     User,
     GearSix,
+    GameController,
     ShieldCheck,
     Wrench,
     Heart,
@@ -26,6 +27,7 @@ const TABS = [
     { id: "profile", label: "Profile", icon: User },
     { id: "account", label: "Account", icon: GearSix },
     { id: "security", label: "Security", icon: ShieldCheck },
+    { id: "connections", label: "Connections", icon: GameController },
     { id: "progress", label: "In progress", icon: Wrench },
 ];
 
@@ -67,6 +69,9 @@ export function Account() {
     const [twoFactor, setTwoFactor] = useState({ qrCode: null, secret: null, enabled: false });
     const [totpToken, setTotpToken] = useState('');
     const [twoFactorLoading, setTwoFactorLoading] = useState(false);
+    const [itch, setItch] = useState({ loading: true, connected: false });
+    const [itchBusy, setItchBusy] = useState(false);
+    const [itchMessage, setItchMessage] = useState("");
 
     useEffect(() => {
         let cancelled = false;
@@ -82,9 +87,7 @@ export function Account() {
                         secret: data?.enabled ? null : current.secret,
                     }));
                 }
-            } catch (err) {
-                if (!cancelled) console.error('Unable to load 2FA status:', err);
-            }
+            } catch {}
         }
 
         loadTwoFactorStatus();
@@ -92,6 +95,18 @@ export function Account() {
         return () => {
             cancelled = true;
         };
+    }, []);
+
+    useEffect(() => {
+        let cancelled = false;
+        api.get('/integrations/itch')
+            .then((data) => {
+                if (!cancelled) setItch({ ...data, loading: false });
+            })
+            .catch(() => {
+                if (!cancelled) setItch({ loading: false, connected: false, unavailable: true });
+            });
+        return () => { cancelled = true; };
     }, []);
 
     if (!user) return null;
@@ -103,8 +118,8 @@ export function Account() {
         try {
             const data = await api.get('/account/totp/setup');
             setTwoFactor({ qrCode: data.qrCodeDataUrl, secret: data.secret, enabled: false });
-        } catch (err) {
-            console.error(err);
+        } catch {
+            setSettingsError('We could not prepare two-factor authentication right now.');
         } finally {
             setTwoFactorLoading(false);
         }
@@ -117,8 +132,8 @@ export function Account() {
             await api.post('/account/totp/enable', { token: totpToken });
             setTwoFactor(prev => ({ ...prev, enabled: true }));
             setTotpToken('');
-        } catch (err) {
-            console.error(err);
+        } catch {
+            setSettingsError('We could not enable two-factor authentication. Check the code and try again.');
         } finally {
             setTwoFactorLoading(false);
         }
@@ -132,8 +147,8 @@ export function Account() {
             await api.delete('/account/totp/disable', { token: totpToken });
             setTwoFactor({ qrCode: null, secret: null, enabled: false });
             setTotpToken('');
-        } catch (err) {
-            console.error(err);
+        } catch {
+            setSettingsError('We could not disable two-factor authentication. Check the code and try again.');
         } finally {
             setTwoFactorLoading(false);
         }
@@ -203,9 +218,8 @@ export function Account() {
                 height: img.naturalHeight,
             });
             setProfileError("");
-        } catch (err) {
+        } catch {
             setProfileError("Failed to process image.");
-            console.error(err);
         }
     }
 
@@ -315,6 +329,52 @@ export function Account() {
     async function signOut() {
         await logout();
         navigate("/", { replace: true });
+    }
+
+    async function connectItch() {
+        setItchBusy(true);
+        setItchMessage("");
+        try {
+            const result = await api.post('/integrations/itch/connect', {
+                client: 'site',
+                locale: 'en',
+                returnPath: '/account',
+            });
+            window.location.assign(result.authorizeUrl);
+        } catch {
+            setItchMessage('We could not start the itch.io connection. Please try again.');
+            setItchBusy(false);
+        }
+    }
+
+    async function syncItch() {
+        setItchBusy(true);
+        setItchMessage("");
+        try {
+            await api.post('/library/sync');
+            const status = await api.get('/integrations/itch');
+            setItch({ ...status, loading: false });
+            setItchMessage('Your itch.io library is up to date.');
+        } catch {
+            setItchMessage('We could not refresh your itch.io library right now.');
+        } finally {
+            setItchBusy(false);
+        }
+    }
+
+    async function disconnectItch() {
+        if (!window.confirm('Disconnect itch.io from your Deadsmile account?')) return;
+        setItchBusy(true);
+        setItchMessage("");
+        try {
+            await api.delete('/integrations/itch');
+            setItch({ loading: false, connected: false, configured: true });
+            setItchMessage('Your itch.io account was disconnected.');
+        } catch {
+            setItchMessage('We could not disconnect the account right now.');
+        } finally {
+            setItchBusy(false);
+        }
     }
 
     return (
@@ -510,7 +570,7 @@ export function Account() {
                                             }}
                                             onClick={() => navigate('/forgot-password')}
                                             >
-                                            <LockKey size={22} weight="bold" />
+                                            <LockKey size={22} weight="regular" />
 
                                             <div
                                                 style={{
@@ -720,6 +780,45 @@ export function Account() {
                                             )}
                                         </>
                                     )}
+                                </div>
+                            </section>
+                        </Reveal>
+                    )}
+
+                    {activeTab === "connections" && (
+                        <Reveal key="connections">
+                            <section className="account-block">
+                                <div className="account-block__head">
+                                    <h2>Connected accounts</h2>
+                                    <p>Link itch.io to verify purchases and keep your Deadsmile library available on the site and launcher.</p>
+                                </div>
+                                <div className="account-panel">
+                                    <div className="account-row account-row--inline connection-row">
+                                        <div className="connection-row__identity">
+                                            <span className="connection-row__icon"><GameController weight="fill" /></span>
+                                            <div>
+                                                <strong>itch.io</strong>
+                                                <p>
+                                                    {itch.loading
+                                                        ? 'Checking connection…'
+                                                        : itch.connected
+                                                            ? `Connected as ${itch.username}`
+                                                            : 'Not connected'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="connection-row__actions">
+                                            {itch.connected ? (
+                                                <>
+                                                    <Button type="button" variant="secondary" onClick={syncItch} disabled={itchBusy}>Refresh library</Button>
+                                                    <Button type="button" variant="ghost" onClick={disconnectItch} disabled={itchBusy}>Disconnect</Button>
+                                                </>
+                                            ) : (
+                                                <Button type="button" variant="secondary" onClick={connectItch} disabled={itchBusy || itch.loading || itch.unavailable}>Connect itch.io</Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {itchMessage && <div className="connection-message" role="status">{itchMessage}</div>}
                                 </div>
                             </section>
                         </Reveal>

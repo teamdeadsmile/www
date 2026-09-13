@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { GameHero } from '../components/games/GameHero';
 import { GameMeta } from '../components/games/GameMeta';
@@ -7,6 +7,7 @@ import { GameGrid } from '../components/games/GameGrid';
 import { ErrorState } from '../components/ui/ErrorState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Lightbox } from '../components/ui/Lightbox';
+import { Modal } from '../components/ui/Modal';
 import { useWishlist } from '../hooks/useWishlist';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../context/LanguageContext';
@@ -17,6 +18,7 @@ export function GameDetails() {
   const { slug } = useParams();
   const { t } = useLanguage();
   const { status: authStatus } = useAuth();
+  const navigate = useNavigate();
   const [state, setState] = useState({
     status: 'loading',
     game: null,
@@ -24,6 +26,8 @@ export function GameDetails() {
   });
   const [revision, setRevision] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [owned, setOwned] = useState(false);
+  const [purchase, setPurchase] = useState({ open: false, status: 'idle', message: '' });
 
   const game = state.game;
   const gameId = game?.id || null;
@@ -50,6 +54,57 @@ export function GameDetails() {
 
     return () => { cancelled = true; };
   }, [slug, revision]);
+
+  useEffect(() => {
+    if (authStatus !== 'authenticated' || !gameId) return;
+    api.get('/library')
+      .then((data) => setOwned((data?.items || []).some((item) => item.id === gameId)))
+      .catch(() => {});
+  }, [authStatus, gameId]);
+
+  async function verifyPurchase(openCheckout = true) {
+    if (authStatus !== 'authenticated') {
+      navigate('/login', { state: { from: `/games/${slug}` } });
+      return;
+    }
+    try {
+      setPurchase({ open: true, status: 'checking', message: '' });
+      const result = await api.post(`/library/${gameId}/verify`);
+      if (result.owned) {
+        setOwned(true);
+        setPurchase({ open: true, status: 'owned', message: '' });
+        return;
+      }
+      setPurchase({ open: true, status: 'checkout', message: '' });
+      if (openCheckout && result.purchaseUrl) window.open(result.purchaseUrl, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      if (error?.code === 'ITCH_NOT_CONNECTED') {
+        setPurchase({ open: true, status: 'connect', message: '' });
+      } else {
+        setPurchase({ open: true, status: 'error', message: 'We could not verify this purchase right now. Please try again.' });
+      }
+    }
+  }
+
+  async function connectItch() {
+    try {
+      const result = await api.post('/integrations/itch/connect', {
+        client: 'site',
+        locale: 'en',
+        returnPath: `/games/${slug}`,
+      });
+      window.location.assign(result.authorizeUrl);
+    } catch {
+      setPurchase({ open: true, status: 'error', message: 'We could not start the itch.io connection right now.' });
+    }
+  }
+
+  useEffect(() => {
+    if (!purchase.open || purchase.status !== 'checkout') return undefined;
+    const onFocus = () => verifyPurchase(false);
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [purchase.open, purchase.status, gameId]);
   const screenshots = game
     ? (game.screenshots && game.screenshots.length > 0
         ? game.screenshots
@@ -117,16 +172,15 @@ export function GameDetails() {
           <p>{game.description || game.shortDescription}</p>
 
           <div className="game-details__actions">
-            {game.purchaseUrl && (
-              <a
-                href={game.purchaseUrl}
-                target="_blank"
-                rel="noreferrer"
+            {game.commerceEnabled && (
+              <button
+                type="button"
+                onClick={() => verifyPurchase(true)}
                 className="btn btn--primary game-details__btn"
               >
                 <ShoppingCart weight="bold" />
-                <span>Get Game</span>
-              </a>
+                <span>{owned ? 'In your library' : 'Buy on itch.io'}</span>
+              </button>
             )}
 
             {authStatus === 'authenticated' && isValidGameId && (
@@ -161,7 +215,7 @@ export function GameDetails() {
               </a>
             )}
 
-            {game.downloadUrl && (
+            {!game.commerceEnabled && game.downloadUrl && (
               <a
                 href={game.downloadUrl}
                 className="btn btn--secondary game-details__btn"
@@ -224,6 +278,34 @@ export function GameDetails() {
         onPrev={goPrev}
         onNext={goNext}
       />
+      <Modal
+        open={purchase.open}
+        onClose={() => setPurchase((current) => ({ ...current, open: false }))}
+        labelledBy="purchase-dialog-title"
+      >
+        <div className="purchase-dialog">
+          <h2 id="purchase-dialog-title">
+            {purchase.status === 'connect' && 'Connect your itch.io account'}
+            {purchase.status === 'checking' && 'Checking your library'}
+            {purchase.status === 'checkout' && 'Complete your purchase'}
+            {purchase.status === 'owned' && 'Game verified'}
+            {purchase.status === 'error' && 'Verification unavailable'}
+          </h2>
+          <p>
+            {purchase.status === 'connect' && 'Deadsmile uses your itch.io account only to verify games you purchased or claimed.'}
+            {purchase.status === 'checking' && 'We are securely checking this game against your itch.io library.'}
+            {purchase.status === 'checkout' && 'Complete the checkout on itch.io, then return to this tab. Your library will update automatically.'}
+            {purchase.status === 'owned' && 'This game is now available in your Deadsmile library and launcher.'}
+            {purchase.status === 'error' && purchase.message}
+          </p>
+          <div className="purchase-dialog__actions">
+            {purchase.status === 'connect' && <button className="btn btn--primary" onClick={connectItch}>Connect itch.io</button>}
+            {purchase.status === 'checkout' && <button className="btn btn--primary" onClick={() => verifyPurchase(false)}>Verify purchase</button>}
+            {purchase.status === 'checkout' && <a className="btn btn--secondary" href={game.purchaseUrl} target="_blank" rel="noreferrer">Open checkout</a>}
+            {purchase.status === 'error' && <button className="btn btn--secondary" onClick={() => verifyPurchase(false)}>Try again</button>}
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

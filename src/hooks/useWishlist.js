@@ -38,7 +38,6 @@ export function useWishlist(gameId) {
 
   const toggle = useCallback(async () => {
     if (!validGameId) {
-      console.warn('Invalid gameId for wishlist toggle:', gameId);
       return false;
     }
     if (!isAuthenticated) {
@@ -54,8 +53,7 @@ export function useWishlist(gameId) {
         setInWishlist(true);
       }
       return true;
-    } catch (err) {
-      console.error('Wishlist toggle error:', err);
+    } catch {
       return false;
     } finally {
       setLoading(false);

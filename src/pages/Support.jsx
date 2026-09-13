@@ -95,8 +95,7 @@ export function Support() {
       setStatus('success');
       setForm((prev) => ({ ...prev, message: '' }));
       setTimeout(() => setStatus(''), 5000);
-    } catch (err) {
-      console.error('Support form error:', err);
+    } catch {
       setStatus('error');
       setTimeout(() => setStatus(''), 5000);
     } finally {
