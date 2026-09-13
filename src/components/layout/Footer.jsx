@@ -52,7 +52,7 @@ export function Footer() {
 
                         <div className="site-footer__social-icons">
                             <a
-                                href="https://instagram.com/teamdeadsmile"
+                                href="https://instagram.com/deadsmilegames"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Instagram"
@@ -70,7 +70,7 @@ export function Footer() {
                             </a>
 
                             <a
-                                href="https://linktr.ee/teamdeadsmile"
+                                href="https://linktr.ee/deadsmilegames"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="Linktree"
@@ -79,7 +79,7 @@ export function Footer() {
                             </a>
 
                             <a
-                                href="https://github.com/teamdeadsmile"
+                                href="https://github.com/deadsmilegames"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="GitHub"
@@ -166,7 +166,7 @@ export function Footer() {
                             />
                             by{" "}
                             <a
-                                href="https://github.com/teamdeadsmile"
+                                href="https://github.com/deadsmilegames"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -176,7 +176,7 @@ export function Footer() {
                     </div>
 
                     <a
-                        href="https://github.com/teamdeadsmile/www"
+                        href="https://github.com/deadsmilegames/www"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="site-footer__source"
