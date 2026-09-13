@@ -101,20 +101,10 @@ export function GameDetails() {
       setPurchase({ open: true, status: 'error', message: 'We could not start the itch.io connection right now.' });
     }
   }
-
-  /**
-   * Tenta abrir o launcher via deep link deadsmile://launch?gameId=...
-   * Se o launcher não estiver instalado, o browser simplesmente ignora
-   * o link — detectamos isso com um timeout e mostramos o fallback.
-   */
   function openInLauncher() {
     setLauncherMissing(false);
     const url = `deadsmile://launch?gameId=${gameId}`;
     window.location.href = url;
-
-    // Se o launcher estiver instalado, o browser vai sair da página
-    // ou mudar de foco. Se nada acontecer em 2s, ele provavelmente
-    // não está instalado.
     const timer = setTimeout(() => setLauncherMissing(true), 2000);
     const cleanup = () => clearTimeout(timer);
     window.addEventListener('blur', cleanup, { once: true });
@@ -195,7 +185,6 @@ export function GameDetails() {
           <p>{game.description || game.shortDescription}</p>
 
           <div className="game-details__actions">
-            {/* Jogo com commerce: comprar OU abrir no launcher se já possuir */}
             {game.commerceEnabled && !owned && (
               <button
                 type="button"
@@ -217,8 +206,6 @@ export function GameDetails() {
                 <span>Play in Launcher</span>
               </button>
             )}
-
-            {/* Aviso quando o launcher não parece estar instalado */}
             {launcherMissing && (
               <p className="game-details__launcher-hint">
                 Launcher not found.{' '}
@@ -353,7 +340,6 @@ export function GameDetails() {
             {purchase.status === 'checkout' && <button className="btn btn--primary" onClick={() => verifyPurchase(false)}>Verify purchase</button>}
             {purchase.status === 'checkout' && <a className="btn btn--secondary" href={game.purchaseUrl} target="_blank" rel="noreferrer">Open checkout</a>}
             {purchase.status === 'error' && <button className="btn btn--secondary" onClick={() => verifyPurchase(false)}>Try again</button>}
-            {/* Atalho para abrir no launcher direto do modal de confirmação */}
             {purchase.status === 'owned' && (
               <button className="btn btn--primary" onClick={() => { setPurchase((c) => ({ ...c, open: false })); openInLauncher(); }}>
                 <GameController weight="bold" />
