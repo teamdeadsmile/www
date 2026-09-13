@@ -6,7 +6,7 @@ import { api } from '../services/api';
 import { Reveal } from '../components/ui/Reveal';
 import './Support.css';
 import { ArrowLeft } from "@phosphor-icons/react";
-const API_BASE = import.meta.env.VITE_API_URL || 'https://apideadsmile.vercel.app/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://deadsmile.vercel.app/api';
 
 const CORE_ENDPOINTS = [
   { name: 'API Gateway', endpoint: '/health' },

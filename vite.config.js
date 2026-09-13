@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5174,
     proxy: {
       '/api': {
-        target: 'https://testeapideadsmilenova.vercel.app',
+        target: 'https://deadsmile.vercel.app',
         changeOrigin: true,
       },
     },

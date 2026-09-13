@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'https://testeapideadsmilenova.vercel.app/api';
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://deadsmile.vercel.app/api';
 let csrfToken = null;
 let csrfPromise = null;
 

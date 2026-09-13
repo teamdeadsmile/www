@@ -24,7 +24,7 @@ import {
 import './Status.css';
 
 const API_BASE =
-  import.meta.env.VITE_API_URL || 'https://apideadsmile.vercel.app/api';
+  import.meta.env.VITE_API_URL || 'https://deadsmile.vercel.app/api';
 
 const POLL_INTERVAL = 60_000;
 const REQUEST_TIMEOUT = 6_000;
